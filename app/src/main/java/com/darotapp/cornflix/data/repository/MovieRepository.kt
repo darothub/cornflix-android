@@ -21,6 +21,7 @@ import com.darotapp.cornflix.utils.VolleySingleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class MovieRepository(application: Application) : ServiceCall {
 
@@ -76,13 +77,21 @@ class MovieRepository(application: Application) : ServiceCall {
                             releaseDate
                         )
                         newMovie.movieId = movieId
+                        newMovie.id = movieId.toInt()
                         CoroutineScope(Dispatchers.IO).launch {
 
-                            MovieDatabase.getInstance(
-                                context
-                            )?.movieDao()?.insert(
-                                newMovie
-                            )
+                            try {
+                                MovieDatabase.getInstance(
+                                    context
+                                )?.movieDao()?.insert(
+                                    newMovie
+                                )
+                            } catch (e: Exception) {
+                                runBlocking {
+                                    Toast.makeText(context!!.applicationContext, "updating existing data", Toast.LENGTH_SHORT).show()
+                                }
+
+                            }
                         }
 
 
@@ -107,6 +116,9 @@ class MovieRepository(application: Application) : ServiceCall {
 
 
                 val errroMessage = VolleyErrorHandler.instance.erroHandler(error, context)
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(context, errroMessage, Toast.LENGTH_LONG).show()
+                }
 
 
             })

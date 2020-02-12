@@ -64,6 +64,8 @@ class LandingFragment : Fragment() {
               Toast.makeText(context, "swiped left", Toast.LENGTH_LONG).show()
 
 
+                val action = LandingFragmentDirections.toFavouriteMovies()
+                Navigation.findNavController(recycler_view).navigate(action)
             }
 
         }).attachToRecyclerView(recycler_view)
@@ -78,7 +80,7 @@ class LandingFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                Toast.makeText(context, "swiped right", Toast.LENGTH_LONG).show()
+//                Toast.makeText(context, "swiped right", Toast.LENGTH_LONG).show()
                 val action = LandingFragmentDirections.toAllMovies()
                 Navigation.findNavController(recycler_view).navigate(action)
 

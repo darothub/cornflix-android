@@ -9,4 +9,7 @@ interface ServiceCall {
     suspend fun getMovies(context: Context) {
 
     }
+    suspend fun favouriteMovies(context: Context) {
+
+    }
 }
