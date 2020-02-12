@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -18,11 +19,17 @@ import com.darotapp.cornflix.R
 import com.darotapp.cornflix.adapters.MovieAdapter
 import com.darotapp.cornflix.adapters.SwipeAdapter
 import com.darotapp.cornflix.data.viewmodel.MovieViewModel
+import com.darotapp.cornflix.model.database.FavouriteMoviesEntity
+import com.darotapp.cornflix.model.database.MovieDatabase
 import com.darotapp.cornflix.model.database.MovieEntity
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_all_movies.*
+import kotlinx.android.synthetic.main.fragment_favourite_movies.*
 import kotlinx.android.synthetic.main.fragment_landing.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 
 /**
@@ -48,7 +55,7 @@ class AllMoviesFragment : Fragment() {
 
 
         Toast.makeText(context, "onActivity created", Toast.LENGTH_SHORT).show()
-        var recylerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_movies)
+        val recylerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_movies)
         recylerView.layoutManager = GridLayoutManager(context, 2)
         recylerView.setHasFixedSize(true)
         movieViewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
@@ -65,29 +72,68 @@ class AllMoviesFragment : Fragment() {
 
 
                 movieAdapter = MovieAdapter(list, object :MovieAdapter.OnMovieListener{
-                    override fun onMovieClick(movieEntity: MovieEntity) {
-                        val viewHolder:RecyclerView.ViewHolder?= null
+                    override fun onMovieClick(movieEntity: MovieEntity, view: View) {
 
-                            i=i.plus(1)
-                            val handler = Handler()
-                            val runn = Runnable {
-                                i = 0
+                        i=i.plus(1)
+                        val handler = Handler()
+                        val runn = Runnable {
+                            i = 0
+                        }
+                        if(i == 1){
+                            Toast.makeText(context, "Single Clicked ", Toast.LENGTH_SHORT).show()
+                            handler.postDelayed(runn, 400)
+                        }
+                        else if(i == 2){
+                            val fav = view.findViewById<ImageView>(R.id.redFav)
+                            if(fav.visibility == View.GONE){
+                                fav.visibility = View.VISIBLE
+                                movieEntity.favourite = true
+                                val(title, movieImage, rating, overView, releaseDate ) = movieEntity
+                                val favMovie = FavouriteMoviesEntity(
+                                    title,
+                                    movieImage,
+                                    rating,
+                                    overView,
+                                    releaseDate
+                                )
+                                favMovie.favourite = movieEntity.favourite
+                                favMovie.movieId = movieEntity.movieId
+                                favMovie.id = movieEntity.id
+
+
+                                CoroutineScope(Main).launch {
+
+                                    try {
+                                        MovieDatabase.getInstance(view.context)!!.favouriteDao().insert(favMovie)
+                                        MovieDatabase.getInstance(view.context)!!.movieDao().update(movieEntity)
+                                        val snackbar = Snackbar
+                                            .make(view, "${favMovie.title} is added to favourite", Snackbar.LENGTH_LONG)
+                                        snackbar.show()
+                                    } catch (e: Exception) {
+
+                                        Toast.makeText(context, "Movie has been previously added \nto favorite", Toast.LENGTH_SHORT).show()
+                                        val snackbar = Snackbar
+                                            .make(view, "Movie has been previously added \n" +
+                                                    "to favorite", Snackbar.LENGTH_LONG)
+                                        snackbar.show()
+                                    }
+
+
+                                }
+
+
                             }
-                            if(i == 1){
-                                Toast.makeText(context, "Single Clicked", Toast.LENGTH_SHORT).show()
-                                handler.postDelayed(runn, 400)
+                            else{
+                                fav.visibility = View.GONE
+                                movieEntity.favourite = false
                             }
-                            else if(i == 2){
-                                Toast.makeText(context, "Double Clicked", Toast.LENGTH_SHORT).show()
 
+                            Toast.makeText(context, "Double Clicked ${movieEntity.favourite}", Toast.LENGTH_SHORT).show()
 
-
-
-                            }
-                            return
-
-
+                        }
+                        return
                     }
+
                 })
                 recylerView.adapter = movieAdapter
                 movieAdapter?.setMovie(list)
