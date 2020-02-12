@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.darotapp.cornflix.R
@@ -57,9 +58,12 @@ class FavouriteMoviesFragment : Fragment() {
 
                 if(list.isNullOrEmpty()){
 //                    Toast.makeText(context, "You have not added any movie", Toast.LENGTH_SHORT).show()
-                    val snackbar = Snackbar
-                        .make(recylerView, "Favourite list is empty", Snackbar.LENGTH_LONG)
-                    snackbar.show()
+                    try {
+                        val snackbar = Snackbar
+                            .make(post_appbar, "Favourite list is empty", Snackbar.LENGTH_LONG)
+                        snackbar.show()
+                    } catch (e: Exception) {
+                    }
                 }
                 else{
                     favMovieAdapter = FavouriteMoviesAdapter(list, object : FavouriteMoviesAdapter.OnMovieListener{
@@ -91,25 +95,12 @@ class FavouriteMoviesFragment : Fragment() {
                                 updatedMovie.movieId = movieEntity.movieId
                                 updatedMovie.id = movieEntity.id
 
-                                CoroutineScope(Dispatchers.IO).launch {
+                                CoroutineScope(Dispatchers.Main).launch {
                                     MovieDatabase.getInstance(view.context)!!.favouriteDao().delete(movieEntity)
                                     MovieDatabase.getInstance(view.context)!!.movieDao().update(updatedMovie)
 
                                 }
-                                activity?.recreate()
-
-
-//                                val(title, movieImage, rating, overView, releaseDate ) = movieEntity
-//                                val favMovie = FavouriteMoviesEntity(
-//                                    title,
-//                                    movieImage,
-//                                    rating,
-//                                    overView,
-//                                    releaseDate
-//                                )
-//                                favMovie.favourite = movieEntity.favourite
-//                                favMovie.movieId = movieEntity.movieId
-
+                                findNavController().navigate(R.id.favouriteMoviesFragment)
 
                                 Toast.makeText(context, "${movieEntity.title} has been removed", Toast.LENGTH_SHORT).show()
 
