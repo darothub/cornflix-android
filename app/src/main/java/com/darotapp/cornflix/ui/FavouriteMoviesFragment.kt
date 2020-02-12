@@ -94,6 +94,7 @@ class FavouriteMoviesFragment : Fragment() {
                                 CoroutineScope(Dispatchers.IO).launch {
                                     MovieDatabase.getInstance(view.context)!!.favouriteDao().delete(movieEntity)
                                     MovieDatabase.getInstance(view.context)!!.movieDao().update(updatedMovie)
+
                                 }
                                 activity?.recreate()
 

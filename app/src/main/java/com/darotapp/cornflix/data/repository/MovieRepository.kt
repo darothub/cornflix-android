@@ -116,9 +116,9 @@ class MovieRepository(application: Application) : ServiceCall {
 
 
                 val errroMessage = VolleyErrorHandler.instance.erroHandler(error, context)
-//                CoroutineScope(Dispatchers.Main).launch {
-//                    Toast.makeText(context, errroMessage, Toast.LENGTH_LONG).show()
-//                }
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(context, errroMessage, Toast.LENGTH_LONG).show()
+                }
 
 
             })
