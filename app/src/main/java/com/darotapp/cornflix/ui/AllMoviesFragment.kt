@@ -57,10 +57,11 @@ class AllMoviesFragment : Fragment() {
             recycler_view_movies.layoutManager = GridLayoutManager(context, 2)
             recycler_view_movies.setHasFixedSize(true)
             movieAdapter = MovieAdapter(list, object :MovieAdapter.OnMovieListener{
-                override fun onPostClick(movieEntity: MovieEntity) {
-                    Toast.makeText(context, "${movieEntity.movieId} is clicked", Toast.LENGTH_LONG).show()
-                }
+                override fun onMovieClick(movieEntity: MovieEntity) {
 
+                    Toast.makeText(context, "${movieEntity.movieId} is clicked", Toast.LENGTH_LONG).show()
+
+                }
             })
             recycler_view_movies.adapter = movieAdapter
             movieAdapter?.setMovie(list)

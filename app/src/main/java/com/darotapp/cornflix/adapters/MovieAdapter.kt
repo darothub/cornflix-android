@@ -55,12 +55,16 @@ class MovieAdapter(private var movies:List<MovieEntity?>?, private var listener:
             rating.setText("${ratingNum!!}")
             ratingBar.rating = ratingNum
             Picasso.get().load(movieEntity.movieImage).into(imageThmbnail)
+
+            itemView.setOnClickListener {
+                listener.onMovieClick(movieEntity)
+            }
         }
 
     }
 
     interface OnMovieListener{
-        fun onPostClick(movieEntity: MovieEntity)
+        fun onMovieClick(movieEntity: MovieEntity)
     }
 
 
