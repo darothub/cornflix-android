@@ -28,6 +28,9 @@ class MovieAdapter(private var movies:List<MovieEntity?>?, private var listener:
         this.movies = movies as List<MovieEntity>
         notifyDataSetChanged()
     }
+    fun getMovieAt(position: Int):MovieEntity?{
+        return movies?.get(position)
+    }
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
         movies?.let{
             val currentMovies = it[position]
@@ -43,11 +46,33 @@ class MovieAdapter(private var movies:List<MovieEntity?>?, private var listener:
         var ratingBar = itemView.findViewById<RatingBar>(R.id.ratingBar)
         var imageThmbnail = itemView.findViewById<ImageView>(R.id.thumbnail)
         var fav = itemView.findViewById<ImageView>(R.id.favourite)
+        var redFav = itemView.findViewById<ImageView>(R.id.redFav)
         var rating = itemView.findViewById<TextView>(R.id.rating)
 
         fun bind(movieEntity: MovieEntity, listener: OnMovieListener){
 
 
+            fav.setOnClickListener{
+                if(fav.visibility == View.VISIBLE){
+                    fav.visibility = View.GONE
+                    redFav.visibility = View.VISIBLE
+                }
+                else{
+                    fav.visibility == View.VISIBLE
+                    redFav.visibility = View.GONE
+                }
+            }
+
+            redFav.setOnClickListener{
+                if(redFav.visibility == View.VISIBLE){
+                    redFav.visibility = View.GONE
+                    fav.visibility = View.VISIBLE
+                }
+                else{
+                    redFav.visibility == View.VISIBLE
+                    fav.visibility = View.GONE
+                }
+            }
             title.setText(movieEntity.title)
             releaseDate.setText(movieEntity.releaseDate)
             ratingBar.numStars = 5
