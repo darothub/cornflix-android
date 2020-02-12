@@ -9,5 +9,16 @@
         android:id="@+id/landingFragment"
         android:name="com.darotapp.cornflix.ui.LandingFragment"
         android:label="fragment_landing"
-        tools:layout="@layout/fragment_landing" />
+        tools:layout="@layout/fragment_landing" >
+        <action
+            android:id="@+id/toAllMovies"
+            app:destination="@id/allMoviesFragment"
+            app:enterAnim="@anim/fragment_close_enter"
+            app:exitAnim="@anim/fragment_close_enter" />
+    </fragment>
+    <fragment
+        android:id="@+id/allMoviesFragment"
+        android:name="com.darotapp.cornflix.ui.AllMoviesFragment"
+        android:label="fragment_all_movies"
+        tools:layout="@layout/fragment_all_movies" />
 </navigation>
