@@ -9,14 +9,15 @@ import java.io.Serializable
 class MovieEntity(
     var title: String?,
     var movieImage:String?,
-    var rating:String?,
-    var overView:String?
+    var rating:Int?,
+    var overView:String?,
+    var releaseDate:String?
 
 
 ): Serializable {
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
-
     var favourite:Int? = 0
+    var movieId:String? = ""
 
 }
