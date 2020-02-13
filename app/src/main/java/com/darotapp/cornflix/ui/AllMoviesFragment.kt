@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 import com.darotapp.cornflix.R
 import com.darotapp.cornflix.adapters.MovieAdapter
@@ -50,12 +51,13 @@ class AllMoviesFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        val recyclerMovies = view?.findViewById<RecyclerView>(R.id.recycler_view_movies)
 
         movieViewModel!!.getAllMovies()!!.observeForever {list ->
 //            Log.i("listi", "${list?.last()?.title}")
 
-            recycler_view_movies.layoutManager = GridLayoutManager(context, 2)
-            recycler_view_movies.setHasFixedSize(true)
+            recyclerMovies?.layoutManager = GridLayoutManager(context, 2)
+            recyclerMovies?.setHasFixedSize(true)
             movieAdapter = MovieAdapter(list, object :MovieAdapter.OnMovieListener{
                 override fun onMovieClick(movieEntity: MovieEntity) {
 
