@@ -11,7 +11,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -26,6 +31,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_all_movies.*
 import kotlinx.android.synthetic.main.fragment_favourite_movies.*
 import kotlinx.android.synthetic.main.fragment_landing.*
+import kotlinx.android.synthetic.main.fragment_movie_details.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
@@ -74,14 +80,20 @@ class AllMoviesFragment : Fragment() {
                 movieAdapter = MovieAdapter(list, object :MovieAdapter.OnMovieListener{
                     override fun onMovieClick(movieEntity: MovieEntity, view: View) {
 
+
+
+
                         i=i.plus(1)
                         val handler = Handler()
                         val runn = Runnable {
                             i = 0
                         }
                         if(i == 1){
+
+
+
                             Toast.makeText(context, "Single Clicked ", Toast.LENGTH_SHORT).show()
-                            handler.postDelayed(runn, 400)
+                            handler.postDelayed(runn, 5000)
                         }
                         else if(i == 2){
                             val fav = view.findViewById<ImageView>(R.id.redFav)
@@ -144,10 +156,36 @@ class AllMoviesFragment : Fragment() {
 
             Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
         }
+
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val movie = movieAdapter?.getMovieAt(viewHolder.adapterPosition)
+                Toast.makeText(context, "swiped right", Toast.LENGTH_LONG).show()
+                val extras = FragmentNavigatorExtras(
+                    viewHolder.itemView.findViewById<ImageView>(R.id.thumbnail) to movie?.movieId!!
+                )
+
+                val action = AllMoviesFragmentDirections.toMovieDetails()
+                action.movie = movie
+                Navigation.findNavController(recylerView).navigate(action, extras)
+
+            }
+
+        }).attachToRecyclerView(recycler_view_movies)
     }
 
     override fun onStart() {
         super.onStart()
+
+
 
 //        Toast.makeText(context, "onStart", Toast.LENGTH_SHORT).show()
     }
