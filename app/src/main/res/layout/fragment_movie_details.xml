@@ -1,30 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="15dp"
+
     tools:context=".ui.MovieDetailsFragment">
-
-    <ImageView
-        android:id="@+id/image"
+    
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:scaleType="centerInside"
-        app:srcCompat="@drawable/ic_launcher_background"/>
-    <EditText
-        android:id="@+id/overView"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:layout_height="350dp">
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/toolBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_scrollFlags="exitUntilCollapsed|scroll"
+            app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Large"
+            app:expandedTitleMargin="48dp">
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolBar"
+                android:theme="@style/Theme.AppCompat.Light"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"/>
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/pix"/>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:gravity="start|end"
-        android:clickable="false"
-        android:focusable="false"
-        android:layout_below="@id/image"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <LinearLayout
+                android:id="@+id/labels"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="13dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/releaseDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/released"
+                    android:textSize="12sp"/>
 
-        android:inputType="textMultiLine"/>
+                <TextView
+                    android:id="@+id/rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/rating"
+                    android:textSize="12sp"/>
+
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:numStars="5"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:progressTint="@color/colorPrimary"
+                    android:isIndicator="true"
+                    android:stepSize="0.5"
+                    android:rating="2.5"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"
+
+                    />
+
+                <ImageView
+                    android:id="@+id/redFav"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    app:srcCompat="@drawable/ic_fav_red"
+                    android:elevation="5dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+
+                    android:layout_marginStart="10dp"
+
+
+                    />
+            </LinearLayout>
+            <com.pouriahemati.phjustifiedtextview.PHJustifiedTextView
+                android:id="@+id/overView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:layout_margin="7dp"
+                android:padding="8dp"
+                android:layout_below="@id/labels"
+
+                />
+
+        </RelativeLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 
 
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -9,6 +9,8 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.darotapp.cornflix.R
 import com.darotapp.cornflix.model.database.MovieEntity
+import com.pedromassango.doubleclick.DoubleClick
+import com.pedromassango.doubleclick.DoubleClickListener
 import com.squareup.picasso.Picasso
 import java.util.*
 
@@ -83,35 +85,50 @@ class MovieAdapter(private var movies:List<MovieEntity?>?, private var listener:
                 redFav.visibility = View.VISIBLE
             }
 
-            itemView.setOnClickListener {
+            itemView.setOnClickListener(DoubleClick(object :DoubleClickListener{
+                override fun onDoubleClick(view: View?) {
 
-                i=i.plus(1)
-                val handler = Handler()
-                val runn = Runnable {
-                    i = 0
-                }
-                if(i == 1){
-//                    Toast.makeText(context, "Single Clicked ${movieEntity.favourite}", Toast.LENGTH_SHORT).show()
-                    handler.postDelayed(runn, 400)
-                }
-                else if(i == 2){
-//                    Toast.makeText(context, "Double Clicked ", Toast.LENGTH_SHORT).show()
                     Log.i("Dob", "Double clicked")
 
-
-
+                    listener.onMovieClick(movieEntity, itemView)
                 }
 
+                override fun onSingleClick(view: View?) {
+                    Log.i("click", "Single click")
+                    listener.onSingleClick(movieEntity, itemView)
+                }
 
-                listener.onMovieClick(movieEntity, it)
-
-            }
+            }))
+//            itemView.setOnClickListener {
+//
+//                i=i.plus(1)
+//                val handler = Handler()
+//                val runn = Runnable {
+//                    i = 0
+//                }
+//                if(i == 1){
+//                    Log.i("click", "Single click")
+//                    handler.postDelayed(runn, 400)
+//                }
+//                else if(i == 2){
+////                    Toast.makeText(context, "Double Clicked ", Toast.LENGTH_SHORT).show()
+//                    Log.i("Dob", "Double clicked")
+//
+//                    listener.onMovieClick(movieEntity, it)
+//
+//                }
+//
+//
+//
+//
+//            }
         }
 
     }
 
     interface OnMovieListener{
         fun onMovieClick(movieEntity: MovieEntity, view:View)
+        fun onSingleClick(movieEntity: MovieEntity, view: View)
     }
 
 
