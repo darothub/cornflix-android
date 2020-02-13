@@ -97,7 +97,7 @@ class LandingFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        Toast.makeText(context, "started", Toast.LENGTH_LONG).show()
+//        Toast.makeText(context, "started", Toast.LENGTH_LONG).show()
 
 
 

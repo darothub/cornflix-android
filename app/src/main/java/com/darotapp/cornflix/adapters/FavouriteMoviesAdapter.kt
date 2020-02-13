@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.darotapp.cornflix.R
 import com.darotapp.cornflix.model.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.model.database.MovieEntity
+import com.pedromassango.doubleclick.DoubleClick
+import com.pedromassango.doubleclick.DoubleClickListener
 import com.squareup.picasso.Picasso
 import java.util.*
 
@@ -83,17 +85,33 @@ class FavouriteMoviesAdapter(private var movies:List<FavouriteMoviesEntity?>?, p
             ratingBar.rating = ratingNum
             Picasso.get().load(movieEntity.movieImage).into(imageThmbnail)
 
-            itemView.setOnClickListener {
+            itemView.setOnClickListener(DoubleClick(object : DoubleClickListener {
+                override fun onDoubleClick(view: View?) {
 
-                listener.onMovieClick(movieEntity, it)
+                    Log.i("Dob", "Double clicked")
 
-            }
+                    listener.onMovieClick(movieEntity, itemView)
+                }
+
+                override fun onSingleClick(view: View?) {
+                    Log.i("click", "Single click")
+                    listener.onSingleClick(movieEntity, itemView)
+                }
+
+            }))
+
+//            itemView.setOnClickListener {
+//
+//                listener.onMovieClick(movieEntity, it)
+//
+//            }
         }
 
     }
 
     interface OnMovieListener{
         fun onMovieClick(movieEntity: FavouriteMoviesEntity, view:View)
+        fun onSingleClick(movieEntity: FavouriteMoviesEntity, view: View)
     }
 
 

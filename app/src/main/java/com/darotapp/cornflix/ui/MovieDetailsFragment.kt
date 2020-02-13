@@ -13,6 +13,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 
 import com.darotapp.cornflix.R
+import com.darotapp.cornflix.model.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.model.database.MovieEntity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_favourite_movies.*
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.fragment_movie_details.appBar
  */
 class MovieDetailsFragment : Fragment() {
     var incomingMovie:MovieEntity?=null
+    var fromFav:FavouriteMoviesEntity?=null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,27 +54,47 @@ class MovieDetailsFragment : Fragment() {
         //Receives arguments from other fragment
         arguments?.let{
             incomingMovie = MovieDetailsFragmentArgs.fromBundle(it).movie
+            fromFav = MovieDetailsFragmentArgs.fromBundle(it).favMovie
         }
         val ratingValue =incomingMovie?.rating?.div(2)?.toFloat()
+        val ratingValue2 =fromFav?.rating?.div(2)?.toFloat()
 
         image.transitionName = incomingMovie?.movieId
         overView.transitionName = "overView"
         overView.alignment = Paint.Align.LEFT
         overView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16.0F)
-        releaseDate.append(" ${incomingMovie?.releaseDate}")
-        rating.append(" $ratingValue")
-        ratingBar.numStars = 5
-        ratingValue?.let {
-            ratingBar.rating = it
+
+
+
+
+        incomingMovie?.let {
+            if (it.favourite) redFav.visibility = View.VISIBLE
+            overView.setText(it.overView)
+            releaseDate.append(" ${it.releaseDate}")
+            rating.append(" $ratingValue")
+            ratingValue?.let {
+                ratingBar.rating = it
+            }
+            Picasso.get().load(it.movieImage).into(image)
+        }
+        fromFav?.let {
+            if (it.favourite) redFav.visibility = View.VISIBLE
+            overView.setText(it.overView)
+            releaseDate.append(" ${it?.releaseDate}")
+            rating.append(" $ratingValue2")
+            ratingValue2?.let {
+                ratingBar.rating = it
+            }
+            Picasso.get().load(it.movieImage).into(image)
         }
 
-        if(incomingMovie?.favourite!!){
-            redFav.visibility = View.VISIBLE
-        }
 
 
-        Picasso.get().load(incomingMovie?.movieImage).into(image)
-        overView.setText(incomingMovie?.overView)
+
+
+
+
+
     }
 //
 

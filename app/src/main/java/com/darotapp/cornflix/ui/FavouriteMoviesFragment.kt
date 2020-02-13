@@ -22,7 +22,6 @@ import com.darotapp.cornflix.model.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.model.database.MovieDatabase
 import com.darotapp.cornflix.model.database.MovieEntity
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_all_movies.*
 import kotlinx.android.synthetic.main.fragment_favourite_movies.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -75,43 +74,38 @@ class FavouriteMoviesFragment : Fragment() {
                     favMovieAdapter = FavouriteMoviesAdapter(list, object : FavouriteMoviesAdapter.OnMovieListener{
                         override fun onMovieClick(movieEntity: FavouriteMoviesEntity, view: View) {
 
-                            i=i.plus(1)
-                            val handler = Handler()
-                            val runn = Runnable {
-                                i = 0
-                            }
-                            if(i == 1){
-                                Toast.makeText(context, "Single Clicked ", Toast.LENGTH_SHORT).show()
-                                handler.postDelayed(runn, 400)
-                            }
-                            else if(i == 2){
-                                val fav = view.findViewById<ImageView>(R.id.redFav)
-                                fav.visibility = View.GONE
-                                movieEntity.favourite = false
-                                val(title, movieImage, rating, overView, releaseDate ) = movieEntity
+                            val fav = view.findViewById<ImageView>(R.id.redFav)
+                            fav.visibility = View.GONE
+                            movieEntity.favourite = false
+                            val(title, movieImage, rating, overView, releaseDate ) = movieEntity
 
-                                val updatedMovie = MovieEntity(
-                                    title,
-                                    movieImage,
-                                    rating,
-                                    overView,
-                                    releaseDate
-                                )
-                                updatedMovie.favourite = movieEntity.favourite
-                                updatedMovie.movieId = movieEntity.movieId
-                                updatedMovie.id = movieEntity.id
+                            val updatedMovie = MovieEntity(
+                                title,
+                                movieImage,
+                                rating,
+                                overView,
+                                releaseDate
+                            )
+                            updatedMovie.favourite = movieEntity.favourite
+                            updatedMovie.movieId = movieEntity.movieId
+                            updatedMovie.id = movieEntity.id
 
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    MovieDatabase.getInstance(view.context)!!.favouriteDao().delete(movieEntity)
-                                    MovieDatabase.getInstance(view.context)!!.movieDao().update(updatedMovie)
-
-                                }
-                                findNavController().navigate(R.id.favouriteMoviesFragment)
-
-                                Toast.makeText(context, "${movieEntity.title} has been removed", Toast.LENGTH_SHORT).show()
+                            CoroutineScope(Dispatchers.Main).launch {
+                                MovieDatabase.getInstance(view.context)!!.favouriteDao().delete(movieEntity)
+                                MovieDatabase.getInstance(view.context)!!.movieDao().update(updatedMovie)
 
                             }
-                            return
+                            findNavController().navigate(R.id.favouriteMoviesFragment)
+
+                            Toast.makeText(context, "${movieEntity.title} has been removed", Toast.LENGTH_SHORT).show()
+
+                        }
+
+                        override fun onSingleClick(movieEntity: FavouriteMoviesEntity, view: View) {
+
+                            val action = FavouriteMoviesFragmentDirections.actionFavouriteMoviesFragmentToMovieDetailsFragment()
+                            action.favMovie = movieEntity
+                            Navigation.findNavController(recylerView).navigate(action)
                         }
 
 

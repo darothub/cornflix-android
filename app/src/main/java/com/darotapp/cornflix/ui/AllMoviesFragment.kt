@@ -2,40 +2,30 @@ package com.darotapp.cornflix.ui
 
 
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
 import com.darotapp.cornflix.R
 import com.darotapp.cornflix.adapters.MovieAdapter
-import com.darotapp.cornflix.adapters.SwipeAdapter
 import com.darotapp.cornflix.data.viewmodel.MovieViewModel
 import com.darotapp.cornflix.model.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.model.database.MovieDatabase
 import com.darotapp.cornflix.model.database.MovieEntity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_all_movies.*
-import kotlinx.android.synthetic.main.fragment_favourite_movies.*
-import kotlinx.android.synthetic.main.fragment_landing.*
-import kotlinx.android.synthetic.main.fragment_movie_details.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 
