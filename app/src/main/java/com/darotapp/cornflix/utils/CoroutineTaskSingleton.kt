@@ -2,6 +2,8 @@ package com.darotapp.cornflix.utils
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import com.darotapp.cornflix.model.database.FavouriteDao
+import com.darotapp.cornflix.model.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.model.database.MovieDao
 import com.darotapp.cornflix.model.database.MovieEntity
 import kotlinx.coroutines.CoroutineScope
@@ -38,6 +40,12 @@ class CoroutineTaskSingleton (application: Application) {
     fun deleteTask(movieDao: MovieDao, movieEntity: MovieEntity){
         CoroutineScope(Dispatchers.IO).launch {
             movieDao.delete(movieEntity)
+        }
+    }
+
+    fun insertFav(favouriteDao: FavouriteDao, favouriteMoviesEntity: FavouriteMoviesEntity){
+        CoroutineScope(Dispatchers.IO).launch {
+            favouriteDao.insert(favouriteMoviesEntity)
         }
     }
 

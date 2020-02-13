@@ -8,29 +8,28 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.darotapp.cornflix.R
+import com.darotapp.cornflix.model.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.model.database.MovieEntity
-import com.pedromassango.doubleclick.DoubleClick
-import com.pedromassango.doubleclick.DoubleClickListener
 import com.squareup.picasso.Picasso
 import java.util.*
 
-class MovieAdapter(private var movies:List<MovieEntity?>?, private var listener:OnMovieListener):RecyclerView.Adapter<MovieAdapter.MovieHolder>()  {
+class FavouriteMoviesAdapter(private var movies:List<FavouriteMoviesEntity?>?, private var listener:OnMovieListener):RecyclerView.Adapter<FavouriteMoviesAdapter.MovieHolder>()  {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.movie_recycler_items, parent, false)
-        return MovieAdapter.MovieHolder(itemView)
+        return FavouriteMoviesAdapter.MovieHolder(itemView)
     }
 
     override fun getItemCount(): Int {
         return movies!!.size
     }
 
-    fun setMovie(movies: List<MovieEntity?>?){
-        this.movies = movies as List<MovieEntity>
+    fun setMovie(movies: List<FavouriteMoviesEntity?>?){
+        this.movies = movies as List<FavouriteMoviesEntity>
         notifyDataSetChanged()
     }
-    fun getMovieAt(position: Int):MovieEntity?{
+    fun getMovieAt(position: Int):FavouriteMoviesEntity?{
         return movies?.get(position)
     }
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
@@ -51,13 +50,15 @@ class MovieAdapter(private var movies:List<MovieEntity?>?, private var listener:
         var redFav = itemView.findViewById<ImageView>(R.id.redFav)
         var rating = itemView.findViewById<TextView>(R.id.rating)
 
-        fun bind(movieEntity: MovieEntity, listener: OnMovieListener){
+        fun bind(movieEntity:FavouriteMoviesEntity, listener: OnMovieListener){
 
             var i = 0
-
+            Log.i("favourite", "${movieEntity.favourite}")
             if(movieEntity.favourite){
                 redFav.visibility = View.VISIBLE
             }
+
+
 
             val calendar = Calendar.getInstance()
             val dateReleased = movieEntity.releaseDate?.split("-")
@@ -81,54 +82,18 @@ class MovieAdapter(private var movies:List<MovieEntity?>?, private var listener:
             rating.setText("${ratingNum!!}")
             ratingBar.rating = ratingNum
             Picasso.get().load(movieEntity.movieImage).into(imageThmbnail)
-            if(movieEntity.favourite){
-                redFav.visibility = View.VISIBLE
+
+            itemView.setOnClickListener {
+
+                listener.onMovieClick(movieEntity, it)
+
             }
-
-            itemView.setOnClickListener(DoubleClick(object :DoubleClickListener{
-                override fun onDoubleClick(view: View?) {
-
-                    Log.i("Dob", "Double clicked")
-
-                    listener.onMovieClick(movieEntity, itemView)
-                }
-
-                override fun onSingleClick(view: View?) {
-                    Log.i("click", "Single click")
-                    listener.onSingleClick(movieEntity, itemView)
-                }
-
-            }))
-//            itemView.setOnClickListener {
-//
-//                i=i.plus(1)
-//                val handler = Handler()
-//                val runn = Runnable {
-//                    i = 0
-//                }
-//                if(i == 1){
-//                    Log.i("click", "Single click")
-//                    handler.postDelayed(runn, 400)
-//                }
-//                else if(i == 2){
-////                    Toast.makeText(context, "Double Clicked ", Toast.LENGTH_SHORT).show()
-//                    Log.i("Dob", "Double clicked")
-//
-//                    listener.onMovieClick(movieEntity, it)
-//
-//                }
-//
-//
-//
-//
-//            }
         }
 
     }
 
     interface OnMovieListener{
-        fun onMovieClick(movieEntity: MovieEntity, view:View)
-        fun onSingleClick(movieEntity: MovieEntity, view: View)
+        fun onMovieClick(movieEntity: FavouriteMoviesEntity, view:View)
     }
 
 

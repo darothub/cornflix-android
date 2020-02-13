@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:background="@color/colorPrimaryDark"
+    tools:context=".ui.FavouriteMoviesFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/post_appbar"
+        android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
+        android:background="@android:color/transparent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/blog_activity_toolbar"
+            android:layout_width="match_parent"
+            android:background="@android:color/transparent"
+            android:layout_height="wrap_content"
+            android:elevation="10dp"
+            app:title="Favourites"
+            app:titleTextColor="@color/colorAccent"
+            app:layout_collapseMode="pin">
+
+
+
+        </androidx.appcompat.widget.Toolbar>
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+
+        android:id="@+id/recycler_view_fav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/post_appbar"
+        />
+
+</RelativeLayout>

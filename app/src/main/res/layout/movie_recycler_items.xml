@@ -5,6 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="10dp"
+    android:transitionName="movies"
     >
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
@@ -25,6 +26,7 @@
                 android:layout_width="200dp"
                 android:layout_height="250dp"
                 android:scaleType="centerCrop"
+                android:transitionName="thumbnail"
                 app:srcCompat="@drawable/pix"/>
 
             <ImageView
@@ -33,6 +35,18 @@
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_favorite"
                 android:elevation="5dp"
+                android:padding="3dp"
+
+                android:layout_margin="2dp"
+
+                />
+            <ImageView
+                android:id="@+id/redFav"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_fav_red"
+                android:elevation="5dp"
+                android:visibility="gone"
                 android:padding="3dp"
                 android:layout_margin="2dp"
 
