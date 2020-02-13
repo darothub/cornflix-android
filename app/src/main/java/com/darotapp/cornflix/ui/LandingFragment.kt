@@ -2,18 +2,28 @@ package com.darotapp.cornflix.ui
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 import com.darotapp.cornflix.R
 import com.darotapp.cornflix.adapters.SwipeAdapter
+import com.darotapp.cornflix.data.viewmodel.MovieViewModel
+import com.darotapp.cornflix.model.database.MovieDatabase
+import com.darotapp.cornflix.model.database.MovieEntity
 import kotlinx.android.synthetic.main.fragment_landing.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
@@ -21,6 +31,7 @@ import kotlinx.android.synthetic.main.fragment_landing.*
 class LandingFragment : Fragment() {
 
     val adapter:SwipeAdapter? = null
+    var movieViewModel:MovieViewModel?=null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,6 +63,9 @@ class LandingFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
               Toast.makeText(context, "swiped left", Toast.LENGTH_LONG).show()
 
+
+                val action = LandingFragmentDirections.toFavouriteMovies()
+                Navigation.findNavController(recycler_view).navigate(action)
             }
 
         }).attachToRecyclerView(recycler_view)
@@ -66,11 +80,26 @@ class LandingFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                Toast.makeText(context, "swiped right", Toast.LENGTH_LONG).show()
+//                Toast.makeText(context, "swiped right", Toast.LENGTH_LONG).show()
+                val action = LandingFragmentDirections.toAllMovies()
+                Navigation.findNavController(recycler_view).navigate(action)
 
             }
 
         }).attachToRecyclerView(recycler_view)
+
+
+
+
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+//        Toast.makeText(context, "started", Toast.LENGTH_LONG).show()
+
+
 
     }
 }

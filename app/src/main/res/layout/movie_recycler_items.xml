@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="2dp"
+    android:transitionName="movies"
+    >
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        app:cardUseCompatPadding="true"
+        app:cardCornerRadius="5dp"
+        >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp">
+
+            <ImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:scaleType="centerCrop"
+                android:transitionName="thumbnail"
+                app:srcCompat="@drawable/pix"/>
+
+            <ImageView
+                android:id="@+id/favourite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_favorite"
+                android:padding="3dp"
+
+                android:layout_margin="2dp"
+
+                />
+<!--            <ImageView-->
+<!--                android:id="@+id/redFav"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:srcCompat="@drawable/ic_fav_red"-->
+<!--                android:elevation="5dp"-->
+<!--                android:visibility="gone"-->
+<!--                android:padding="3dp"-->
+<!--                android:layout_margin="2dp"-->
+
+<!--                />-->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/redFav"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:lottie_rawRes="@raw/bouncinglove"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"
+                android:layout_marginTop="-18dp"
+                android:layout_alignParentTop="true"
+                android:elevation="5dp"
+                android:layout_alignParentStart="true"
+
+                app:lottie_loop="true"
+
+                app:lottie_autoPlay="true" />
+            <LinearLayout
+                android:id="@+id/ratingVG"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/thumbnail"
+                android:orientation="horizontal">
+
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:numStars="5"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:progressTint="@color/colorPrimary"
+                    android:isIndicator="true"
+                    android:stepSize="0.5"
+                    android:rating="2.5"
+                    android:layout_gravity="center"
+
+                    />
+                <TextView
+                    android:id="@+id/rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat_alternates"
+                    android:text="2"
+                    android:layout_gravity="center"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/titleVG"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ratingVG"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat_alternates"
+                    android:text="title"
+                    android:ellipsize="end"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/releaseDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat_alternates"
+                    android:text="Date: "
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

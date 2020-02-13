@@ -9,5 +9,48 @@
         android:id="@+id/landingFragment"
         android:name="com.darotapp.cornflix.ui.LandingFragment"
         android:label="fragment_landing"
-        tools:layout="@layout/fragment_landing" />
+        tools:layout="@layout/fragment_landing" >
+        <action
+            android:id="@+id/toAllMovies"
+            app:destination="@id/allMoviesFragment"
+            app:enterAnim="@anim/fragment_close_enter"
+            app:exitAnim="@anim/fragment_close_enter" />
+        <action
+            android:id="@+id/toFavouriteMovies"
+            app:destination="@id/favouriteMoviesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/allMoviesFragment"
+        android:name="com.darotapp.cornflix.ui.AllMoviesFragment"
+        tools:layout="@layout/fragment_all_movies">
+        <action
+            android:id="@+id/toMovieDetails"
+            app:destination="@id/movieDetailsFragment" />
+        <action
+            android:id="@+id/toFavouritePage"
+            app:destination="@id/favouriteMoviesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favouriteMoviesFragment"
+        android:name="com.darotapp.cornflix.ui.FavouriteMoviesFragment"
+        tools:layout="@layout/fragment_favourite_movies" >
+        <action
+            android:id="@+id/action_favouriteMoviesFragment_to_movieDetailsFragment"
+            app:destination="@id/movieDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/movieDetailsFragment"
+        android:name="com.darotapp.cornflix.ui.MovieDetailsFragment"
+        tools:layout="@layout/fragment_movie_details">
+        <argument
+            android:name="movie"
+            android:defaultValue="@null"
+            app:argType="com.darotapp.cornflix.model.database.MovieEntity"
+            app:nullable="true" />
+        <argument
+            android:name="favMovie"
+            android:defaultValue="@null"
+            app:argType="com.darotapp.cornflix.model.database.FavouriteMoviesEntity"
+            app:nullable="true" />
+    </fragment>
 </navigation>
