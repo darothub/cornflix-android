@@ -60,7 +60,7 @@ class AllMoviesFragment : Fragment() {
 
 
 
-        Toast.makeText(context, "onActivity created", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(context, "onActivity created", Toast.LENGTH_SHORT).show()
         val recylerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_movies)
         recylerView.layoutManager = GridLayoutManager(context, 2)
         recylerView.setHasFixedSize(true)
@@ -80,70 +80,82 @@ class AllMoviesFragment : Fragment() {
                 movieAdapter = MovieAdapter(list, object :MovieAdapter.OnMovieListener{
                     override fun onMovieClick(movieEntity: MovieEntity, view: View) {
 
+                        val fav = view.findViewById<ImageView>(R.id.redFav)
+                        var favMovie:FavouriteMoviesEntity? = null
+                        val(title, movieImage, rating, overView, releaseDate ) = movieEntity
+                        favMovie = FavouriteMoviesEntity(
+                            title,
+                            movieImage,
+                            rating,
+                            overView,
+                            releaseDate
+                        )
+
+                        favMovie.movieId = movieEntity.movieId
+                        favMovie.id = movieEntity.id
+                        if(fav.visibility == View.GONE){
+                            fav.visibility = View.VISIBLE
+                            movieEntity.favourite = true
+                            favMovie.favourite = movieEntity.favourite
 
 
 
-                        i=i.plus(1)
-                        val handler = Handler()
-                        val runn = Runnable {
-                            i = 0
-                        }
-                        if(i == 1){
+                            CoroutineScope(Main).launch {
 
+                                try {
+                                    MovieDatabase.getInstance(view.context)!!.favouriteDao().insert(favMovie)
+                                    MovieDatabase.getInstance(view.context)!!.movieDao().update(movieEntity)
+                                    val snackbar = Snackbar
+                                        .make(view, "${favMovie.title} is added to favourite", Snackbar.LENGTH_LONG)
+                                    snackbar.show()
+                                } catch (e: Exception) {
 
-
-                            Toast.makeText(context, "Single Clicked ", Toast.LENGTH_SHORT).show()
-                            handler.postDelayed(runn, 5000)
-                        }
-                        else if(i == 2){
-                            val fav = view.findViewById<ImageView>(R.id.redFav)
-                            if(fav.visibility == View.GONE){
-                                fav.visibility = View.VISIBLE
-                                movieEntity.favourite = true
-                                val(title, movieImage, rating, overView, releaseDate ) = movieEntity
-                                val favMovie = FavouriteMoviesEntity(
-                                    title,
-                                    movieImage,
-                                    rating,
-                                    overView,
-                                    releaseDate
-                                )
-                                favMovie.favourite = movieEntity.favourite
-                                favMovie.movieId = movieEntity.movieId
-                                favMovie.id = movieEntity.id
-
-
-                                CoroutineScope(Main).launch {
-
-                                    try {
-                                        MovieDatabase.getInstance(view.context)!!.favouriteDao().insert(favMovie)
-                                        MovieDatabase.getInstance(view.context)!!.movieDao().update(movieEntity)
-                                        val snackbar = Snackbar
-                                            .make(view, "${favMovie.title} is added to favourite", Snackbar.LENGTH_LONG)
-                                        snackbar.show()
-                                    } catch (e: Exception) {
-
-                                        Toast.makeText(context, "Movie has been previously added \nto favorite", Toast.LENGTH_SHORT).show()
-                                        val snackbar = Snackbar
-                                            .make(view, "Movie has been previously added \n" +
-                                                    "to favorite", Snackbar.LENGTH_LONG)
-                                        snackbar.show()
-                                    }
-
-
+                                    Toast.makeText(context, "Movie has been previously added \nto favorite", Toast.LENGTH_SHORT).show()
+                                    val snackbar = Snackbar
+                                        .make(view, "Movie has been previously added \n" +
+                                                "to favorite", Snackbar.LENGTH_LONG)
+                                    snackbar.show()
                                 }
 
 
                             }
-                            else{
-                                fav.visibility = View.GONE
-                                movieEntity.favourite = false
-                            }
 
-                            Toast.makeText(context, "Double Clicked ${movieEntity.favourite}", Toast.LENGTH_SHORT).show()
 
                         }
-                        return
+                        else{
+                            fav.visibility = View.GONE
+                            movieEntity.favourite = false
+                            CoroutineScope(Main).launch {
+
+                                try {
+                                    MovieDatabase.getInstance(view.context)!!.favouriteDao().delete(favMovie)
+                                    MovieDatabase.getInstance(view.context)!!.movieDao().update(movieEntity)
+                                    val snackbar = Snackbar
+                                        .make(view, "${favMovie.title} is removed from favourite", Snackbar.LENGTH_LONG)
+                                    snackbar.show()
+                                } catch (e: Exception) {
+
+//                                        Toast.makeText(context, "Movie has been previously removed \nto favorite", Toast.LENGTH_SHORT).show()
+                                    val snackbar = Snackbar
+                                        .make(view, "Movie has been previously removed \n" +
+                                                "to favorite", Snackbar.LENGTH_LONG)
+                                    snackbar.show()
+                                }
+
+
+                            }
+                        }
+
+                    }
+
+                    override fun onSingleClick(movieEntity: MovieEntity, view: View) {
+                        val extras = FragmentNavigatorExtras(
+                            view.findViewById<ImageView>(R.id.thumbnail) to movieEntity.movieId!!
+                        )
+
+                        val action = AllMoviesFragmentDirections.toMovieDetails()
+                        action.movie = movieEntity
+                        Navigation.findNavController(recylerView).navigate(action, extras)
                     }
 
                 })
@@ -157,7 +169,7 @@ class AllMoviesFragment : Fragment() {
             Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
         }
 
-        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT){
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -168,7 +180,7 @@ class AllMoviesFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val movie = movieAdapter?.getMovieAt(viewHolder.adapterPosition)
-                Toast.makeText(context, "swiped right", Toast.LENGTH_LONG).show()
+//                Toast.makeText(context, "swiped right", Toast.LENGTH_LONG).show()
                 val extras = FragmentNavigatorExtras(
                     viewHolder.itemView.findViewById<ImageView>(R.id.thumbnail) to movie?.movieId!!
                 )
