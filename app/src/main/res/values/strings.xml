@@ -7,4 +7,5 @@
     <string name="swipe_advise">Swipe the button below right for All movies  \nor swipe left for your favourites</string>
     <string name="released">Released: </string>
     <string name="rating">Rating: </string>
+    <string name="top_rated">Top rated</string>
 </resources>

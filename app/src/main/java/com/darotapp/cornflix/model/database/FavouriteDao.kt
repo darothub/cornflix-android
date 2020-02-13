@@ -17,7 +17,7 @@ interface FavouriteDao {
 
 
     @get:Query(
-        "SELECT * FROM favouritemoviesentity ORDER BY id DESC"
+        "SELECT * FROM favouritemoviesentity ORDER BY title DESC"
     )
     val allFav: LiveData<List<FavouriteMoviesEntity?>?>?
 }
