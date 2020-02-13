@@ -196,8 +196,13 @@ class AllMoviesFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        val recyclerMovies = view?.findViewById<RecyclerView>(R.id.recycler_view_movies)
 
 
+            recyclerMovies?.layoutManager = GridLayoutManager(context, 2)
+            recyclerMovies?.setHasFixedSize(true)
+            movieAdapter = MovieAdapter(list, object :MovieAdapter.OnMovieListener{
+                override fun onMovieClick(movieEntity: MovieEntity) 
 
 //        Toast.makeText(context, "onStart", Toast.LENGTH_SHORT).show()
     }
