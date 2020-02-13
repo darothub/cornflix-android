@@ -15,6 +15,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -59,6 +60,9 @@ class AllMoviesFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
 
+        //Attaching navigation to the app bar and toolbar
+        val nav = Navigation.findNavController(post_appbar)
+        NavigationUI.setupWithNavController(allMoviesToolbar, nav)
 
 //        Toast.makeText(context, "onActivity created", Toast.LENGTH_SHORT).show()
         val recylerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_movies)
@@ -192,19 +196,28 @@ class AllMoviesFragment : Fragment() {
             }
 
         }).attachToRecyclerView(recycler_view_movies)
+
+        favouriteCard.setOnClickListener {
+            val action = AllMoviesFragmentDirections.toFavouritePage()
+            findNavController().navigate(action)
+        }
+
     }
 
     override fun onStart() {
         super.onStart()
-        val recyclerMovies = view?.findViewById<RecyclerView>(R.id.recycler_view_movies)
 
 
-            recyclerMovies?.layoutManager = GridLayoutManager(context, 2)
-            recyclerMovies?.setHasFixedSize(true)
-            movieAdapter = MovieAdapter(list, object :MovieAdapter.OnMovieListener{
-                override fun onMovieClick(movieEntity: MovieEntity) 
-
-//        Toast.makeText(context, "onStart", Toast.LENGTH_SHORT).show()
+//        val recyclerMovies = view?.findViewById<RecyclerView>(R.id.recycler_view_movies)
+//
+//
+//            recyclerMovies?.layoutManager = GridLayoutManager(context, 2)
+//            recyclerMovies?.setHasFixedSize(true)
+//            movieAdapter = MovieAdapter(list, object :MovieAdapter.OnMovieListener {
+//                override fun onMovieClick(movieEntity: MovieEntity)
+//
+////        Toast.makeText(context, "onStart", Toast.LENGTH_SHORT).show()
+//            }
     }
 
     override fun onResume() {

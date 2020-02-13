@@ -22,16 +22,17 @@
     <fragment
         android:id="@+id/allMoviesFragment"
         android:name="com.darotapp.cornflix.ui.AllMoviesFragment"
-        android:label="fragment_all_movies"
-        tools:layout="@layout/fragment_all_movies" >
+        tools:layout="@layout/fragment_all_movies">
         <action
             android:id="@+id/toMovieDetails"
             app:destination="@id/movieDetailsFragment" />
+        <action
+            android:id="@+id/toFavouritePage"
+            app:destination="@id/favouriteMoviesFragment" />
     </fragment>
     <fragment
         android:id="@+id/favouriteMoviesFragment"
         android:name="com.darotapp.cornflix.ui.FavouriteMoviesFragment"
-        android:label="fragment_favourite_movies"
         tools:layout="@layout/fragment_favourite_movies" />
     <fragment
         android:id="@+id/movieDetailsFragment"

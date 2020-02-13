@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="10dp"
+    android:padding="2dp"
     android:transitionName="movies"
     >
     <androidx.cardview.widget.CardView
@@ -23,7 +23,7 @@
 
             <ImageView
                 android:id="@+id/thumbnail"
-                android:layout_width="200dp"
+                android:layout_width="250dp"
                 android:layout_height="250dp"
                 android:scaleType="centerCrop"
                 android:transitionName="thumbnail"
@@ -34,23 +34,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_favorite"
-                android:elevation="5dp"
                 android:padding="3dp"
 
                 android:layout_margin="2dp"
 
                 />
-            <ImageView
+<!--            <ImageView-->
+<!--                android:id="@+id/redFav"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:srcCompat="@drawable/ic_fav_red"-->
+<!--                android:elevation="5dp"-->
+<!--                android:visibility="gone"-->
+<!--                android:padding="3dp"-->
+<!--                android:layout_margin="2dp"-->
+
+<!--                />-->
+            <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/redFav"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_fav_red"
-                android:elevation="5dp"
+                app:lottie_rawRes="@raw/bouncinglove"
+                android:layout_centerHorizontal="true"
                 android:visibility="gone"
-                android:padding="3dp"
-                android:layout_margin="2dp"
+                android:layout_marginTop="-18dp"
+                android:layout_alignParentTop="true"
+                android:elevation="5dp"
+                android:layout_alignParentStart="true"
 
-                />
+                app:lottie_loop="true"
+
+                app:lottie_autoPlay="true" />
             <LinearLayout
                 android:id="@+id/ratingVG"
                 android:layout_width="wrap_content"

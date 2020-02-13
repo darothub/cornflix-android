@@ -10,7 +10,9 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.darotapp.cornflix.R
@@ -20,6 +22,7 @@ import com.darotapp.cornflix.model.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.model.database.MovieDatabase
 import com.darotapp.cornflix.model.database.MovieEntity
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_all_movies.*
 import kotlinx.android.synthetic.main.fragment_favourite_movies.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +50,9 @@ class FavouriteMoviesFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        val nav = Navigation.findNavController(appBar)
+        NavigationUI.setupWithNavController(favToolbar, nav)
+
         val recylerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_fav)
         recylerView.layoutManager = GridLayoutManager(context, 2)
         recylerView.setHasFixedSize(true)
@@ -60,7 +66,7 @@ class FavouriteMoviesFragment : Fragment() {
 //                    Toast.makeText(context, "You have not added any movie", Toast.LENGTH_SHORT).show()
                     try {
                         val snackbar = Snackbar
-                            .make(post_appbar, "Favourite list is empty", Snackbar.LENGTH_LONG)
+                            .make(appBar, "Favourite list is empty", Snackbar.LENGTH_LONG)
                         snackbar.show()
                     } catch (e: Exception) {
                     }
@@ -118,6 +124,8 @@ class FavouriteMoviesFragment : Fragment() {
             }
         } catch (e: Exception) {
         }
+
+
     }
 
 }

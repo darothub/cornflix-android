@@ -57,6 +57,7 @@ class MovieAdapter(private var movies:List<MovieEntity?>?, private var listener:
 
             if(movieEntity.favourite){
                 redFav.visibility = View.VISIBLE
+
             }
 
             val calendar = Calendar.getInstance()

@@ -79,19 +79,35 @@
 
                     />
 
-                <ImageView
+<!--                <ImageView-->
+<!--                    android:id="@+id/redFav"-->
+<!--                    android:layout_width="18dp"-->
+<!--                    android:layout_height="18dp"-->
+<!--                    app:srcCompat="@drawable/ic_fav_red"-->
+<!--                    android:elevation="5dp"-->
+<!--                    android:visibility="gone"-->
+<!--                    tools:visibility="visible"-->
+
+<!--                    android:layout_marginStart="10dp"-->
+
+
+<!--                    />-->
+
+                <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/redFav"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    app:srcCompat="@drawable/ic_fav_red"
-                    android:elevation="5dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    app:lottie_rawRes="@raw/bouncinglove"
+
                     android:visibility="gone"
                     tools:visibility="visible"
+                    android:layout_marginStart="-15dp"
+                    android:layout_marginTop="-10dp"
+                    android:elevation="5dp"
 
-                    android:layout_marginStart="10dp"
+                    app:lottie_loop="true"
 
-
-                    />
+                    app:lottie_autoPlay="true" />
             </LinearLayout>
             <com.pouriahemati.phjustifiedtextview.PHJustifiedTextView
                 android:id="@+id/overView"

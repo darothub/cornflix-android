@@ -7,14 +7,39 @@
     android:background="@color/colorPrimaryDark"
     tools:context=".ui.AllMoviesFragment">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/post_appbar"
+        android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
+        android:background="@android:color/primary_text_light"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/allMoviesToolbar"
+            android:layout_width="match_parent"
+            android:background="@android:color/transparent"
+            android:layout_height="wrap_content"
+            android:elevation="10dp"
+            app:title="Top rated"
+            app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:titleTextColor="@color/colorAccent"
+            app:layout_collapseMode="pin">
+
+
+        </androidx.appcompat.widget.Toolbar>
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.recyclerview.widget.RecyclerView
 
         android:id="@+id/recycler_view_movies"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         />
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/favouriteCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
@@ -22,12 +47,13 @@
         app:cardCornerRadius="50dp">
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/cornflixImage"
+            android:id="@+id/favoriteIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:lottie_rawRes="@raw/bouncinglove"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/cornflixText"
+            android:layout_marginTop="10dp"
             app:lottie_loop="true"
 
             app:lottie_autoPlay="true" />

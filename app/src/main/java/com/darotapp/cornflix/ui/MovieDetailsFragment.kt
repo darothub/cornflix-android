@@ -9,11 +9,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.Navigation
+import androidx.navigation.ui.NavigationUI
 
 import com.darotapp.cornflix.R
 import com.darotapp.cornflix.model.database.MovieEntity
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_favourite_movies.*
 import kotlinx.android.synthetic.main.fragment_movie_details.*
+import kotlinx.android.synthetic.main.fragment_movie_details.appBar
 
 /**
  * A simple [Fragment] subclass.
@@ -42,6 +46,9 @@ class MovieDetailsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        val nav = Navigation.findNavController(appBar)
+        NavigationUI.setupWithNavController(toolBar, nav)
         //Receives arguments from other fragment
         arguments?.let{
             incomingMovie = MovieDetailsFragmentArgs.fromBundle(it).movie
