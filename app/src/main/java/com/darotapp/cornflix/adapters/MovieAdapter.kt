@@ -12,6 +12,7 @@ import com.darotapp.cornflix.model.database.MovieEntity
 import com.pedromassango.doubleclick.DoubleClick
 import com.pedromassango.doubleclick.DoubleClickListener
 import com.squareup.picasso.Picasso
+import nz.co.trademe.covert.Covert
 import java.util.*
 
 class MovieAdapter(private var movies:List<MovieEntity?>?, private var listener:OnMovieListener):RecyclerView.Adapter<MovieAdapter.MovieHolder>()  {
@@ -34,6 +35,7 @@ class MovieAdapter(private var movies:List<MovieEntity?>?, private var listener:
         return movies?.get(position)
     }
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
+//        covert.drawCornerFlag(holder)
         movies?.let{
             val currentMovies = it[position]
             holder.bind(it[position]!!, listener)

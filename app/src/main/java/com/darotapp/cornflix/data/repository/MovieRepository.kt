@@ -88,7 +88,7 @@ class MovieRepository(application: Application) : ServiceCall {
                                 )
                             } catch (e: Exception) {
                                 runBlocking {
-                                    Toast.makeText(context!!.applicationContext, "updating existing data", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context.applicationContext, "updating existing data", Toast.LENGTH_SHORT).show()
                                 }
 
                             }

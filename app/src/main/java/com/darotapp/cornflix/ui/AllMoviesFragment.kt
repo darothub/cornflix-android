@@ -16,6 +16,7 @@ import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.darotapp.cornflix.R
 import com.darotapp.cornflix.adapters.MovieAdapter
 import com.darotapp.cornflix.data.viewmodel.MovieViewModel
@@ -23,6 +24,7 @@ import com.darotapp.cornflix.model.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.model.database.MovieDatabase
 import com.darotapp.cornflix.model.database.MovieEntity
 import com.google.android.material.snackbar.Snackbar
+import com.shashank.sony.fancytoastlib.FancyToast
 import kotlinx.android.synthetic.main.fragment_all_movies.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,8 +58,9 @@ class AllMoviesFragment : Fragment() {
 
 //        Toast.makeText(context, "onActivity created", Toast.LENGTH_SHORT).show()
         val recylerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_movies)
-        recylerView.layoutManager = GridLayoutManager(context, 2)
-        recylerView.setHasFixedSize(true)
+
+
+
         movieViewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
         CoroutineScope(Dispatchers.Main).launch {
             movieViewModel!!.loadData(context!!)
@@ -68,9 +71,6 @@ class AllMoviesFragment : Fragment() {
 
             movieViewModel!!.getAllMovies()!!.observeForever { list ->
                 //            Log.i("listi", "${list?.last()?.title}")
-
-
-
                 movieAdapter = MovieAdapter(list, object :MovieAdapter.OnMovieListener{
                     override fun onMovieClick(movieEntity: MovieEntity, view: View) {
 
@@ -92,23 +92,23 @@ class AllMoviesFragment : Fragment() {
                             movieEntity.favourite = true
                             favMovie.favourite = movieEntity.favourite
 
-
-
                             CoroutineScope(Main).launch {
 
                                 try {
                                     MovieDatabase.getInstance(view.context)!!.favouriteDao().insert(favMovie)
                                     MovieDatabase.getInstance(view.context)!!.movieDao().update(movieEntity)
-                                    val snackbar = Snackbar
-                                        .make(view, "${favMovie.title} is added to favourite", Snackbar.LENGTH_LONG)
-                                    snackbar.show()
+//                                    val snackbar = Snackbar
+//                                        .make(view, "${favMovie.title} is added to favourite", Snackbar.LENGTH_LONG)
+//                                    snackbar.show()
+                                    FancyToast.makeText(context,"${favMovie.title} is added to favourite",FancyToast.LENGTH_LONG,FancyToast.SUCCESS,true).show()
                                 } catch (e: Exception) {
 
-                                    Toast.makeText(context, "Movie has been previously added \nto favorite", Toast.LENGTH_SHORT).show()
-                                    val snackbar = Snackbar
-                                        .make(view, "Movie has been previously added \n" +
-                                                "to favorite", Snackbar.LENGTH_LONG)
-                                    snackbar.show()
+                                    FancyToast.makeText(context,"Movie has been previously added \nto favorite", FancyToast.LENGTH_LONG,FancyToast.ERROR,true).show()
+//                                    Toast.makeText(context, "Movie has been previously added \nto favorite", Toast.LENGTH_SHORT).show()
+//                                    val snackbar = Snackbar
+//                                        .make(view, "Movie has been previously added \n" +
+//                                                "to favorite", Snackbar.LENGTH_LONG)
+//                                    snackbar.show()
                                 }
 
 
@@ -124,9 +124,10 @@ class AllMoviesFragment : Fragment() {
                                 try {
                                     MovieDatabase.getInstance(view.context)!!.favouriteDao().delete(favMovie)
                                     MovieDatabase.getInstance(view.context)!!.movieDao().update(movieEntity)
-                                    val snackbar = Snackbar
-                                        .make(view, "${favMovie.title} is removed from favourite", Snackbar.LENGTH_LONG)
-                                    snackbar.show()
+//                                    val snackbar = Snackbar
+//                                        .make(view, "${favMovie.title} is removed from favourite", Snackbar.LENGTH_LONG)
+//                                    snackbar.show()
+                                    FancyToast.makeText(context,"${favMovie.title} is removed from favourite", FancyToast.LENGTH_LONG,FancyToast.INFO,true).show()
                                 } catch (e: Exception) {
 
 //                                        Toast.makeText(context, "Movie has been previously removed \nto favorite", Toast.LENGTH_SHORT).show()
@@ -153,6 +154,8 @@ class AllMoviesFragment : Fragment() {
                     }
 
                 })
+                recylerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                recylerView.setHasFixedSize(true)
                 recylerView.adapter = movieAdapter
                 movieAdapter?.setMovie(list)
 

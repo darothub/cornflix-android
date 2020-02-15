@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.darotapp.cornflix.R
 import com.darotapp.cornflix.adapters.FavouriteMoviesAdapter
 import com.darotapp.cornflix.data.viewmodel.MovieViewModel
@@ -22,6 +23,7 @@ import com.darotapp.cornflix.model.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.model.database.MovieDatabase
 import com.darotapp.cornflix.model.database.MovieEntity
 import com.google.android.material.snackbar.Snackbar
+import com.shashank.sony.fancytoastlib.FancyToast
 import kotlinx.android.synthetic.main.fragment_favourite_movies.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,8 +55,7 @@ class FavouriteMoviesFragment : Fragment() {
         NavigationUI.setupWithNavController(favToolbar, nav)
 
         val recylerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_fav)
-        recylerView.layoutManager = GridLayoutManager(context, 2)
-        recylerView.setHasFixedSize(true)
+
 
 
         movieViewModel = ViewModelProvider(this).get(MovieViewModel::class.java)
@@ -97,7 +98,9 @@ class FavouriteMoviesFragment : Fragment() {
                             }
                             findNavController().navigate(R.id.favouriteMoviesFragment)
 
-                            Toast.makeText(context, "${movieEntity.title} has been removed", Toast.LENGTH_SHORT).show()
+                            FancyToast.makeText(context,"${movieEntity.title} is removed from favourite", FancyToast.LENGTH_LONG,
+                                FancyToast.INFO,true).show()
+//                            Toast.makeText(context, "${movieEntity.title} has been removed", Toast.LENGTH_SHORT).show()
 
                         }
 
@@ -110,6 +113,8 @@ class FavouriteMoviesFragment : Fragment() {
 
 
                     })
+                    recylerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                    recylerView.setHasFixedSize(true)
                     recylerView.adapter = favMovieAdapter
                     favMovieAdapter?.setMovie(list)
                 }

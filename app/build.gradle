@@ -87,4 +87,22 @@ dependencies {
     //justify textview
     implementation 'com.github.pouriaHemmati:JustifiedTextView:1.0.0'
 
+    //fancy toast
+    implementation 'com.github.Shashank02051997:FancyToast-Android:0.1.6'
+
+    //recycler view layout manager
+    implementation 'com.github.DingMouRen:LayoutManagerGroup:1e6f4f96eb'
+
+    //checkable chip
+    implementation 'com.github.okdroid:checkablechipview:1.0.3'
+
+    //drawable builder
+    implementation 'com.github.duanhong169:drawabletoolbox:1.0.7'
+
+    //convert for recycler view
+    implementation 'nz.co.trademe.covert:covert:2.0.0'
+
+    //sensey for shake
+    implementation 'com.github.nisrulz:sensey:1.8.0'
+
 }
