@@ -5,13 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [MovieEntity::class, FavouriteMoviesEntity::class], version = 2, exportSchema = false)
+@Database(entities = [MovieEntity::class, FavouriteMoviesEntity::class], version = 3, exportSchema = false)
 abstract class MovieDatabase:RoomDatabase() {
 
     abstract fun movieDao():MovieDao
     abstract fun favouriteDao():FavouriteDao
 
     companion object{
+        @Volatile
         private var instance:MovieDatabase? = null
 
         fun getInstance(context: Context):MovieDatabase?{

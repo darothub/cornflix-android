@@ -65,6 +65,8 @@ class FavouriteMoviesFragment : Fragment() {
                 if(list.isNullOrEmpty()){
 //                    Toast.makeText(context, "You have not added any movie", Toast.LENGTH_SHORT).show()
                     try {
+                        placeHolderFav.visibility = View.VISIBLE
+                        recylerView.visibility = View.GONE
                         val snackbar = Snackbar
                             .make(appBar, "Favourite list is empty", Snackbar.LENGTH_LONG)
                         snackbar.show()
@@ -94,9 +96,9 @@ class FavouriteMoviesFragment : Fragment() {
                             CoroutineScope(Dispatchers.Main).launch {
                                 MovieDatabase.getInstance(view.context)!!.favouriteDao().delete(movieEntity)
                                 MovieDatabase.getInstance(view.context)!!.movieDao().update(updatedMovie)
-
                             }
-                            findNavController().navigate(R.id.favouriteMoviesFragment)
+//                            findNavController().navigate(R.id.favouriteMoviesFragment)
+
 
                             FancyToast.makeText(context,"${movieEntity.title} is removed from favourite", FancyToast.LENGTH_LONG,
                                 FancyToast.INFO,true).show()

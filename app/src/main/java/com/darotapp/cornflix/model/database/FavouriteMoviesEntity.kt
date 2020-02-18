@@ -1,6 +1,6 @@
 package com.darotapp.cornflix.model.database
 
-import android.icu.text.CaseMap
+
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable

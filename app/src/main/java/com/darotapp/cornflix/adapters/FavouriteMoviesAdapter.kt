@@ -54,7 +54,7 @@ class FavouriteMoviesAdapter(private var movies:List<FavouriteMoviesEntity?>?, p
 
         fun bind(movieEntity:FavouriteMoviesEntity, listener: OnMovieListener){
 
-            var i = 0
+//            var i = 0
             Log.i("favourite", "${movieEntity.favourite}")
             if(movieEntity.favourite){
                 redFav.visibility = View.VISIBLE
