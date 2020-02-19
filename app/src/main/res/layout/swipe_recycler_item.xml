@@ -12,7 +12,6 @@
         app:lottie_rawRes="@raw/cornfliximage"
         android:layout_centerHorizontal="true"
         app:lottie_loop="true"
-        android:layout_alignParentBottom="true"
         app:lottie_autoPlay="true" />
 
 
@@ -21,10 +20,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
        android:layout_marginTop="10dp"
-        android:layout_centerInParent="true"
         android:background="@drawable/btn_background"
         android:textColor="@color/colorAccent"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_below="@id/cornflixImage"
         android:text="@string/swipe"/>
 

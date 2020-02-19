@@ -53,12 +53,12 @@
         tools:layout="@layout/fragment_movie_details">
         <argument
             android:name="movie"
-            android:defaultValue="@null"
-            app:argType="com.darotapp.cornflix.model.database.MovieEntity"
-            app:nullable="true" />
+            app:argType="com.darotapp.cornflix.data.local.database.MovieEntity"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <argument
             android:name="favMovie"
-            app:argType="com.darotapp.cornflix.model.database.FavouriteMoviesEntity"
+            app:argType="com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity"
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>

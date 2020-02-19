@@ -1,4 +1,4 @@
-package com.darotapp.cornflix.model.database
+package com.darotapp.cornflix.data.local.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
@@ -15,9 +15,15 @@ interface MovieDao {
     @Delete
     suspend fun delete(movieEntity: MovieEntity)
 
+    @Query("SELECT * FROM movieentity")
+    suspend fun getMovies(): List<MovieEntity>
+
 
     @get:Query(
         "SELECT * FROM movieentity"
     )
-    val allMovies: LiveData<List<MovieEntity?>?>?
+    val allMovies: LiveData<List<MovieEntity>>
+
+    @Query("SELECT * FROM movieentity")
+    fun observeMovies(): LiveData<List<MovieEntity>>
 }

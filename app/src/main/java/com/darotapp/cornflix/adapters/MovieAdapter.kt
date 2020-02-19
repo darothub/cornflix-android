@@ -1,6 +1,5 @@
 package com.darotapp.cornflix.adapters
 
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,11 +7,10 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.darotapp.cornflix.R
-import com.darotapp.cornflix.model.database.MovieEntity
+import com.darotapp.cornflix.data.local.database.MovieEntity
 import com.pedromassango.doubleclick.DoubleClick
 import com.pedromassango.doubleclick.DoubleClickListener
 import com.squareup.picasso.Picasso
-import nz.co.trademe.covert.Covert
 import java.util.*
 
 class MovieAdapter<T>(private var movies:List<T?>?, private var listener:OnMovieListener):RecyclerView.Adapter<MovieAdapter.MovieHolder>()  {
@@ -104,30 +102,6 @@ class MovieAdapter<T>(private var movies:List<T?>?, private var listener:OnMovie
 
             }
 
-
-//            itemView.setOnClickListener {
-//
-//                i=i.plus(1)
-//                val handler = Handler()
-//                val runn = Runnable {
-//                    i = 0
-//                }
-//                if(i == 1){
-//                    Log.i("click", "Single click")
-//                    handler.postDelayed(runn, 400)
-//                }
-//                else if(i == 2){
-////                    Toast.makeText(context, "Double Clicked ", Toast.LENGTH_SHORT).show()
-//                    Log.i("Dob", "Double clicked")
-//
-//                    listener.onMovieClick(movieEntity, it)
-//
-//                }
-//
-//
-//
-//
-//            }
         }
 
     }

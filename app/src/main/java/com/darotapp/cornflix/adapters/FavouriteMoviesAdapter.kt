@@ -1,6 +1,5 @@
 package com.darotapp.cornflix.adapters
 
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +7,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.darotapp.cornflix.R
-import com.darotapp.cornflix.model.database.FavouriteMoviesEntity
-import com.darotapp.cornflix.model.database.MovieEntity
+import com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity
 import com.pedromassango.doubleclick.DoubleClick
 import com.pedromassango.doubleclick.DoubleClickListener
 import com.squareup.picasso.Picasso

@@ -1,134 +1,86 @@
 package com.darotapp.cornflix.data.repository
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import com.android.volley.AuthFailureError
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
-import com.darotapp.cornflix.data.network.ServiceCall
-import com.darotapp.cornflix.model.database.MovieDao
-import com.darotapp.cornflix.model.database.MovieDatabase
-import com.darotapp.cornflix.model.database.MovieEntity
-import com.darotapp.cornflix.utils.CoroutineTaskSingleton
-import com.darotapp.cornflix.utils.VolleyErrorHandler
-import com.darotapp.cornflix.utils.VolleySingleton
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
+import androidx.room.Room
+import com.darotapp.cornflix.data.Result
+import com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity
+import com.darotapp.cornflix.data.local.database.LocalDataSourceManager
+import com.darotapp.cornflix.data.local.database.MovieDatabase
+import com.darotapp.cornflix.data.local.database.MovieEntity
+import com.darotapp.cornflix.data.network.RemoteDataSourceManager
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 
-class MovieRepository(application: Application) : ServiceCall {
-
-    private val database = MovieDatabase.getInstance(application)
-
-    private val movieDao: MovieDao = database!!.movieDao()
-    var allMovies = movieDao.allMovies
-
-    override suspend fun getMovies(context: Context) {
-        loadData(context)
-
-    }
-
-    private fun loadData(context: Context) {
-
-        val url =
-            "https://api.themoviedb.org/3/movie/popular?api_key=f1e256985ebc2be710bf1f4ed754da11&language=en-US&page=1"
-
-
-        val request: JsonObjectRequest =
-        JsonObjectRequest(
-            Request.Method.GET,
-            url, null,
-            Response.Listener { response ->
-
-                try {
-
-//
-                    val results = response.getJSONArray("results")
-                    val size = results.length()
-                    var title = ""
-                    var movieImage = ""
-                    var rating = 0
-                    var overView = ""
-                    var releaseDate = ""
-                    var movieId = ""
-
-                    for (movie in 0 until results.length()) {
-                        val eachMovie = results.getJSONObject(movie)
-                        movieImage = "https://image.tmdb.org/t/p/w500"
-                        title = eachMovie.getString("title")
-                        movieImage +=eachMovie.getString("poster_path")
-                        rating  = eachMovie.getInt("vote_average")
-                        overView = eachMovie.getString("overview")
-                        releaseDate = eachMovie.getString("release_date")
-                        movieId = eachMovie.getInt("id").toString()
-
-                        val newMovie =  MovieEntity(
-                            title,
-                            movieImage,
-                            rating,
-                            overView,
-                            releaseDate
-                        )
-                        newMovie.movieId = movieId
-                        newMovie.id = movieId.toInt()
-                        CoroutineScope(Dispatchers.IO).launch {
-
-                            try {
-                                MovieDatabase.getInstance(
-                                    context
-                                )?.movieDao()?.insert(
-                                    newMovie
-                                )
-                            } catch (e: Exception) {
-                                runBlocking {
-                                    Toast.makeText(context.applicationContext, "updating existing data", Toast.LENGTH_SHORT).show()
-                                }
-
-                            }
-                        }
-
-
-                        CoroutineScope(Dispatchers.Main).launch {
-                            Log.i("response", "Response ${newMovie.movieImage}")
-                        }
-                    }
-//
-
-
-
-
-
-
-                } catch (e: Exception) {
-                    Log.i("error", "Response $e")
-
-                    Toast.makeText(context!!.applicationContext, "No activity", Toast.LENGTH_SHORT).show()
-                }
-
-            }, Response.ErrorListener { error ->
-
-
-                val errroMessage = VolleyErrorHandler.instance.erroHandler(error, context)
-                CoroutineScope(Dispatchers.Main).launch {
-                    Toast.makeText(context, errroMessage, Toast.LENGTH_LONG).show()
-                }
-
-
-            })
-        context.applicationContext.let {
-            VolleySingleton.getInstance(it).addToRequestQueue(request)
+class MovieRepository(
+    private val remoteDataSourceManager: RemoteDataSourceManager,
+    private val localDataSourceManager: LocalDataSourceManager
+) : MoviesRepoInterface {
+    override suspend fun getMovies(
+        forceUpdate: Boolean,
+        context: Context
+    ):LiveData<List<MovieEntity>> {
+        val responseList:LiveData<List<MovieEntity>>
+        if(forceUpdate ){
+            val result = remoteDataSourceManager.getMovies(context)
+            responseList = result
+            Log.i("MovieRepo", "remote")
+//            result.observeForever {
+//                Log.i("MovieRepo", "${it.get(0).title}")
+//            }
+        }
+        else{
+            val result = localDataSourceManager.getMovies(context)
+            responseList = result
+//            val size = result.value?.size
+            Result.Success(result)
+            Log.i("MovieRepo", "local")
+//            localDataSourceManager.getMovies(context)
+//            result.observeForever {
+//                Log.i("MovieRepo", "${it.get(0).title}")
+//            }
 
         }
 
-
+        return responseList
     }
+
+    override suspend fun getFavMovies(context: Context): LiveData<List<FavouriteMoviesEntity>> {
+        val result = localDataSourceManager.getFavouriteMovies(context)
+        Result.Success(result)
+        return result
+    }
+
+//    private fun fetchRemotely(){
+//
+//    }
+
+//    companion object {
+//        @Volatile
+//        private var INSTANCE: MovieRepository? = null
+//
+//        fun getRepository(app: Application): MovieRepository {
+//            return INSTANCE ?: synchronized(this) {
+//                val database = Room.databaseBuilder(app,
+//                    MovieDatabase::class.java, "MovieDb")
+//                    .build()
+//                MovieRepository(RemoteDataSourceManager(), LocalDataSourceManager(database.movieDao())).also {
+//                    INSTANCE = it
+//                }
+//            }
+//        }
+//    }
+
+
+
+
+//    var allMovies = databaseDao?.allMovies
+
 
 
 }

@@ -1,7 +1,7 @@
 package com.darotapp.cornflix.utils
 
 import android.content.Context
-import com.darotapp.cornflix.model.database.MovieEntity
+import com.darotapp.cornflix.data.local.database.MovieEntity
 import com.google.gson.GsonBuilder
 
 class SharedPrefManager(val context: Context?) {

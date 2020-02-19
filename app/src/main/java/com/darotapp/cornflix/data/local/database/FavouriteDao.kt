@@ -1,4 +1,4 @@
-package com.darotapp.cornflix.model.database
+package com.darotapp.cornflix.data.local.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
@@ -19,5 +19,5 @@ interface FavouriteDao {
     @get:Query(
         "SELECT * FROM favouritemoviesentity ORDER BY title DESC"
     )
-    val allFav: LiveData<List<FavouriteMoviesEntity?>?>?
+    val allFav: LiveData<List<FavouriteMoviesEntity>>
 }

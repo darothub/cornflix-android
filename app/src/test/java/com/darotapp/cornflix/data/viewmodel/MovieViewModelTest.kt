@@ -1,17 +1,15 @@
 package com.darotapp.cornflix.data.viewmodel
 
-import android.content.Context
 import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.darotapp.cornflix.model.database.MovieEntity
+import com.darotapp.cornflix.data.local.database.MovieEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.withContext
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers
@@ -21,7 +19,6 @@ import org.junit.Test
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.runner.RunWith
-import org.mockito.Mock
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)

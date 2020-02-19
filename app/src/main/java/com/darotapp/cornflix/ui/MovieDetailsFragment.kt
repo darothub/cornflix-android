@@ -13,10 +13,9 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 
 import com.darotapp.cornflix.R
-import com.darotapp.cornflix.model.database.FavouriteMoviesEntity
-import com.darotapp.cornflix.model.database.MovieEntity
+import com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity
+import com.darotapp.cornflix.data.local.database.MovieEntity
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_favourite_movies.*
 import kotlinx.android.synthetic.main.fragment_movie_details.*
 import kotlinx.android.synthetic.main.fragment_movie_details.appBar
 
