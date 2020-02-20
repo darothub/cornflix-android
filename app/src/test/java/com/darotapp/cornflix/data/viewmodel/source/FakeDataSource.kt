@@ -7,22 +7,17 @@ import com.darotapp.cornflix.data.ServiceCall
 import com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.data.local.database.MovieEntity
 
-class FakeDataSource(var movies: MutableList<MovieEntity>? = mutableListOf()):
+class FakeDataSource <T>(var movies: MutableList<T>?):
     ServiceCall {
-    override suspend fun getMovies(context: Context) {
-       val resp = getDataFromRemote(context)
+    override suspend fun getMovies(context: Context, page: Int?): LiveData<List<MovieEntity>>? {
+        val result = MutableLiveData<List<MovieEntity>>()
+        result.value = this.movies as MutableList<MovieEntity>
 
+        return result
     }
 
-    override suspend fun getDataFromRemote(context: Context):LiveData<Boolean> {
-        val responseBool = MutableLiveData<Boolean>(false)
-        movies?.let {
-            responseBool.postValue(true)
-        }
-        return responseBool
+    override suspend fun getFavouriteMovies(context: Context): LiveData<List<FavouriteMoviesEntity>>? {
+        return movies as LiveData<List<FavouriteMoviesEntity>>
     }
 
-    override suspend fun favouriteMovies(context: Context): LiveData<List<FavouriteMoviesEntity?>?>? {
-        return super.favouriteMovies(context)
-    }
 }

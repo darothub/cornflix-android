@@ -47,6 +47,8 @@ class FavouriteMoviesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        observeAndSetData()
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_favourite_movies, container, false)
     }
@@ -62,7 +64,7 @@ class FavouriteMoviesFragment : Fragment() {
 
 
 
-        observeAndSetData()
+//        observeAndSetData()
 
         requireActivity().onBackPressedDispatcher.addCallback(this, object :OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
@@ -132,7 +134,7 @@ class FavouriteMoviesFragment : Fragment() {
                     CoroutineScope(Dispatchers.Main).launch {
                         actAndUpdateChanges(movieEntity, updatedMovie)
                     }
-                    findNavController().navigate(R.id.favouriteMoviesFragment)
+//                    findNavController().navigate(R.id.favouriteMoviesFragment)
 
 
                     FancyToast.makeText(
@@ -165,10 +167,11 @@ class FavouriteMoviesFragment : Fragment() {
     }
 
     suspend fun actAndUpdateChanges(movieEntity: FavouriteMoviesEntity, updatedMovie: MovieEntity) {
-//        ServiceLocator.createLocalDataSource(context!!).favouriteDao?.delete(movieEntity)
-//        ServiceLocator.createLocalDataSource(context!!).movieDao?.update(updatedMovie)
-        MovieDatabase.getInstance(context!!)?.movieDao()?.update(updatedMovie)
-        MovieDatabase.getInstance(context!!)?.favouriteDao()?.delete(movieEntity)
+        ServiceLocator.createLocalDataSource(context!!).favouriteDao?.delete(movieEntity)
+        ServiceLocator.createLocalDataSource(context!!).movieDao?.update(updatedMovie)
+//        MovieDatabase.getInstance(context!!)?.movieDao()?.update(updatedMovie)
+//        MovieDatabase.getInstance(context!!)?.favouriteDao()?.delete(movieEntity)
+        favMovieAdapter?.notifyDataSetChanged()
     }
 
     fun convertToMovieEntity(movieEntity: FavouriteMoviesEntity):MovieEntity{

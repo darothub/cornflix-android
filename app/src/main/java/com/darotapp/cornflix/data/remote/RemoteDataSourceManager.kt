@@ -76,8 +76,8 @@ class RemoteDataSourceManager : ServiceCall {
                             listOfMovies.add(newMovie)
 
                             GlobalScope.launch {
-//                                ServiceLocator.createLocalDataSource(context).movieDao?.insert(newMovie)
-                                MovieDatabase.getInstance(context)?.movieDao()?.insert(newMovie)
+                                ServiceLocator.createLocalDataSource(context).movieDao?.insert(newMovie)
+//                                MovieDatabase.getInstance(context)?.movieDao()?.insert(newMovie)
                             }
 
 

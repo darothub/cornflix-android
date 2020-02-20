@@ -59,6 +59,9 @@ class MovieAdapter<T>(private var movies:List<T?>?, private var listener:OnMovie
                 if(movieEntity.favourite){
                     redFav.visibility = View.VISIBLE
                 }
+                else{
+                    redFav.visibility = View.GONE
+                }
                 val calendar = Calendar.getInstance()
                 val dateReleased = movieEntity.releaseDate?.split("-")
                 val year = dateReleased?.get(0)?.toInt()
@@ -81,9 +84,7 @@ class MovieAdapter<T>(private var movies:List<T?>?, private var listener:OnMovie
                 rating.setText("${ratingNum!!}")
                 ratingBar.rating = ratingNum
                 Picasso.get().load(movieEntity.movieImage).into(imageThmbnail)
-                if(movieEntity.favourite){
-                    redFav.visibility = View.VISIBLE
-                }
+
 
                 itemView.setOnClickListener(DoubleClick(object :DoubleClickListener{
                     override fun onDoubleClick(view: View?) {

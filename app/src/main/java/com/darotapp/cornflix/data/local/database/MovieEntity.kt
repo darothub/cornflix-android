@@ -25,10 +25,6 @@ class MovieEntity(
     var id: Int = 0
     var favourite:Boolean = false
     var movieId:String? = ""
-//    var favTitle: String? = ""
-//    var favMovieImage:String? = ""
-//    var favRating:Int? = 0
-//    var favOverView:String? = ""
-//    var favReleaseDate:String? = ""
+
 
 }

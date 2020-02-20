@@ -54,6 +54,8 @@ class AllMoviesFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
+        observeAndSetData()
+
         return inflater.inflate(R.layout.fragment_all_movies, container, false)
     }
 
@@ -74,7 +76,7 @@ class AllMoviesFragment : Fragment() {
 
 
         loadData(context!!, 2)
-        observeAndSetData()
+
         swipeItemTouchHelper()
         navigateToFavourite()
 
@@ -203,8 +205,10 @@ class AllMoviesFragment : Fragment() {
     }
 
     private suspend fun insertAndUpdate(favMovie: FavouriteMoviesEntity, movieEntity: MovieEntity) {
-        MovieDatabase.getInstance(context!!)?.movieDao()?.update(movieEntity)
-        MovieDatabase.getInstance(context!!)?.favouriteDao()?.insert(favMovie)
+//        MovieDatabase.getInstance(context!!)?.movieDao()?.update(movieEntity)
+//        MovieDatabase.getInstance(context!!)?.favouriteDao()?.insert(favMovie)
+        ServiceLocator.createLocalDataSource(context!!).favouriteDao?.insert(favMovie)
+        ServiceLocator.createLocalDataSource(context!!).movieDao?.update(movieEntity)
 
     }
 
@@ -259,10 +263,10 @@ class AllMoviesFragment : Fragment() {
     //
     private suspend fun deleteAndUpdate(favMovie: FavouriteMoviesEntity, movieEntity: MovieEntity) {
 //
-//        ServiceLocator.createLocalDataSource(context!!).favouriteDao?.delete(favMovie)
-//        ServiceLocator.createLocalDataSource(context!!).movieDao?.update(movieEntity)
-        MovieDatabase.getInstance(context!!)?.movieDao()?.update(movieEntity)
-        MovieDatabase.getInstance(context!!)?.favouriteDao()?.delete(favMovie)
+        ServiceLocator.createLocalDataSource(context!!).favouriteDao?.delete(favMovie)
+        ServiceLocator.createLocalDataSource(context!!).movieDao?.update(movieEntity)
+//        MovieDatabase.getInstance(context!!)?.movieDao()?.update(movieEntity)
+//        MovieDatabase.getInstance(context!!)?.favouriteDao()?.delete(favMovie)
 
     }
 }

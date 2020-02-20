@@ -46,7 +46,6 @@
                     android:layout_marginTop="-15dp"
                     android:layout_alignParentEnd="true"
 
-
                     app:lottie_loop="true"
 
                     app:lottie_autoPlay="true" />
@@ -63,6 +62,7 @@
         android:id="@+id/recycler_view_movies"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:descendantFocusability="blocksDescendants"
         android:layout_marginTop="62dp"
         />
 
