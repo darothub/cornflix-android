@@ -10,6 +10,7 @@ import com.darotapp.cornflix.data.local.database.MovieDao
 import com.darotapp.cornflix.data.local.database.MovieEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers
 import org.hamcrest.core.IsEqual
 import org.junit.Assert.*
@@ -47,13 +48,22 @@ class MovieRepositoryTest{
     }
 
     @Test
-    fun getRemoteMovies_RequestAllMovie()= runBlockingTest{
+    fun getLocalMovies_RequestAllMoviesFromLocalDataSource()= runBlockingTest{
 
 
         val movies = moviesRepository.getMovies(false, ApplicationProvider.getApplicationContext())
 
-        assertEquals(localTasks, IsEqual(movies.getOrAwaitValue()))
 
+        assertThat(movies.value, Matchers.equalTo(localTasks))
+
+    }
+
+    @Test
+    fun getLocalMovies_Returns_NotNull() = runBlockingTest {
+
+        val movies = moviesRepository.getMovies(false, ApplicationProvider.getApplicationContext())
+
+        assertThat(movies.value, Matchers.notNullValue())
     }
 
 
