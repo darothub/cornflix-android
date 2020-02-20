@@ -1,11 +1,10 @@
 package com.darotapp.cornflix.utils
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import com.darotapp.cornflix.model.database.FavouriteDao
-import com.darotapp.cornflix.model.database.FavouriteMoviesEntity
-import com.darotapp.cornflix.model.database.MovieDao
-import com.darotapp.cornflix.model.database.MovieEntity
+import com.darotapp.cornflix.data.local.database.FavouriteDao
+import com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity
+import com.darotapp.cornflix.data.local.database.MovieDao
+import com.darotapp.cornflix.data.local.database.MovieEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

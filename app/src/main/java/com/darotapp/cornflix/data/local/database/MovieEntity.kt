@@ -1,12 +1,12 @@
-package com.darotapp.cornflix.model.database
+package com.darotapp.cornflix.data.local.database
 
-import android.icu.text.CaseMap
+
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
 @Entity
-class FavouriteMoviesEntity(
+class MovieEntity(
     var title: String?,
     var movieImage:String?,
     var rating:Int?,
@@ -20,9 +20,11 @@ class FavouriteMoviesEntity(
     operator fun component3(): Int? = rating
     operator fun component4(): String? = overView
     operator fun component5(): String? = releaseDate
+
     @PrimaryKey()
     var id: Int = 0
     var favourite:Boolean = false
     var movieId:String? = ""
+
 
 }

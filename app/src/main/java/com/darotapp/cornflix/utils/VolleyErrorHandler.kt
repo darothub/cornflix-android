@@ -17,12 +17,10 @@ class VolleyErrorHandler() {
         val instance: VolleyErrorHandler by lazy { HOLDER.INSTANCE }
     }
 
-    fun erroHandler(error: VolleyError, context: Context): String {
+    fun erroHandler(error: VolleyError): String {
 //        val error = com.android.volley.VolleyError()
         var errorString = ""
         var parseError: String = ""
-
-
 
         if (error.networkResponse != null) {
 
