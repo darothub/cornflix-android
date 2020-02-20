@@ -79,7 +79,7 @@ class FavouriteMoviesFragment : Fragment() {
 
         try {
             CoroutineScope(Main).launch {
-                movieViewModel.getAllFavMovies(context!!).observeForever { list ->
+                movieViewModel.getAllFavMovies(context!!)?.observeForever { list ->
 
                     if (list.isNullOrEmpty()) {
 //                    Toast.makeText(context, "You have not added any movie", Toast.LENGTH_SHORT).show()
@@ -111,7 +111,9 @@ class FavouriteMoviesFragment : Fragment() {
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         recyclerView?.setHasFixedSize(true)
         recyclerView?.adapter = favMovieAdapter
-        favMovieAdapter?.setMovie(list)
+
+
+//        favMovieAdapter?.setMovie(list)
     }
 
     private fun setDataIntoAdapter(list: List<FavouriteMoviesEntity?>?) {
@@ -121,13 +123,11 @@ class FavouriteMoviesFragment : Fragment() {
 
                     val fav = view.findViewById<ImageView>(R.id.redFav)
                     fav.visibility = View.GONE
-                    movieEntity.favourite = false
+
 
                     val updatedMovie = convertToMovieEntity(movieEntity)
 
-                    updatedMovie.favourite = movieEntity.favourite
-                    updatedMovie.movieId = movieEntity.movieId
-                    updatedMovie.id = movieEntity.id
+
 
                     CoroutineScope(Dispatchers.Main).launch {
                         actAndUpdateChanges(movieEntity, updatedMovie)
@@ -165,11 +165,14 @@ class FavouriteMoviesFragment : Fragment() {
     }
 
     suspend fun actAndUpdateChanges(movieEntity: FavouriteMoviesEntity, updatedMovie: MovieEntity) {
-        ServiceLocator.createDataBase(context!!).favouriteDao().delete(movieEntity)
-        ServiceLocator.createDataBase(context!!).movieDao().update(updatedMovie)
+//        ServiceLocator.createLocalDataSource(context!!).favouriteDao?.delete(movieEntity)
+//        ServiceLocator.createLocalDataSource(context!!).movieDao?.update(updatedMovie)
+        MovieDatabase.getInstance(context!!)?.movieDao()?.update(updatedMovie)
+        MovieDatabase.getInstance(context!!)?.favouriteDao()?.delete(movieEntity)
     }
 
     fun convertToMovieEntity(movieEntity: FavouriteMoviesEntity):MovieEntity{
+        movieEntity.favourite = false
         val (title, movieImage, rating, overView, releaseDate) = movieEntity
 
         val updatedMovie = MovieEntity(
@@ -179,6 +182,9 @@ class FavouriteMoviesFragment : Fragment() {
             overView,
             releaseDate
         )
+        updatedMovie.favourite = movieEntity.favourite
+        updatedMovie.movieId = movieEntity.movieId
+        updatedMovie.id = movieEntity.id
         return updatedMovie
     }
 

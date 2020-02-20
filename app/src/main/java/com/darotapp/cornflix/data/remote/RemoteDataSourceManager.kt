@@ -1,4 +1,4 @@
-package com.darotapp.cornflix.data.network
+package com.darotapp.cornflix.data.remote
 
 import android.content.Context
 import android.util.Log
@@ -7,39 +7,37 @@ import androidx.lifecycle.MutableLiveData
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
-import com.darotapp.cornflix.MovieApplication
 import com.darotapp.cornflix.ServiceLocator
 import com.darotapp.cornflix.data.Result
 import com.darotapp.cornflix.data.ServiceCall
 import com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity
+import com.darotapp.cornflix.data.local.database.MovieDatabase
 import com.darotapp.cornflix.data.local.database.MovieEntity
 import com.darotapp.cornflix.utils.VolleyErrorHandler
 import com.darotapp.cornflix.utils.VolleySingleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 
 class RemoteDataSourceManager : ServiceCall {
-    override suspend fun getMovies(context: Context):LiveData<List<MovieEntity>> {
-        return getRemoteMovies(context)
+    override suspend fun getMovies(context: Context, page: Int?):LiveData<List<MovieEntity>> {
+        return getRemoteMovies(context, page)
     }
 
-    override suspend fun getFavouriteMovies(context: Context): LiveData<List<FavouriteMoviesEntity>> {
+    override suspend fun getFavouriteMovies(context: Context): LiveData<List<FavouriteMoviesEntity>>? {
         return super.getFavouriteMovies(context)
     }
 
 
 
-    private fun getRemoteMovies(context: Context): LiveData<List<MovieEntity>> {
+    private fun getRemoteMovies(context: Context, page: Int?): LiveData<List<MovieEntity>> {
         val responseList = MutableLiveData<List<MovieEntity>>()
         var listResult: Result<List<MovieEntity>>? = null
         val listOfMovies = ArrayList<MovieEntity>()
 
         val url =
-            "https://api.themoviedb.org/3/movie/popular?api_key=f1e256985ebc2be710bf1f4ed754da11&language=en-US&page=1"
+            "https://api.themoviedb.org/3/movie/popular?api_key=f1e256985ebc2be710bf1f4ed754da11&language=en-US&page=${page?:1}"
         val request: JsonObjectRequest =
             JsonObjectRequest(
                 Request.Method.GET,
@@ -78,8 +76,8 @@ class RemoteDataSourceManager : ServiceCall {
                             listOfMovies.add(newMovie)
 
                             GlobalScope.launch {
-                                ServiceLocator.createDataBase(context).movieDao().insert(newMovie)
-//                                MovieApplication().movieDatabase.movieDao().insert(newMovie)
+//                                ServiceLocator.createLocalDataSource(context).movieDao?.insert(newMovie)
+                                MovieDatabase.getInstance(context)?.movieDao()?.insert(newMovie)
                             }
 
 

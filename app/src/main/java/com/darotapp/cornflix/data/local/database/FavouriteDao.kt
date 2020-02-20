@@ -20,4 +20,7 @@ interface FavouriteDao {
         "SELECT * FROM favouritemoviesentity ORDER BY title DESC"
     )
     val allFav: LiveData<List<FavouriteMoviesEntity>>
+
+    @Query("SELECT * FROM favouritemoviesentity")
+    suspend fun getFavMovies(): List<FavouriteMoviesEntity>
 }

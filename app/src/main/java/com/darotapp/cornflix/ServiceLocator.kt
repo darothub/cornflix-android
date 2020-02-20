@@ -5,7 +5,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.room.Room
 import com.darotapp.cornflix.data.local.database.LocalDataSourceManager
 import com.darotapp.cornflix.data.local.database.MovieDatabase
-import com.darotapp.cornflix.data.network.RemoteDataSourceManager
+import com.darotapp.cornflix.data.remote.RemoteDataSourceManager
 import com.darotapp.cornflix.data.repository.MovieRepository
 import com.darotapp.cornflix.data.repository.MoviesRepoInterface
 
@@ -31,12 +31,18 @@ object ServiceLocator {
         return newRepo
     }
 
-    private fun createLocalDataSource(context: Context): LocalDataSourceManager {
+    fun createLocalDataSource(context: Context): LocalDataSourceManager {
         val database = database ?: createDataBase(context)
-        return LocalDataSourceManager(database.movieDao())
+        return LocalDataSourceManager(database.movieDao(), database.favouriteDao())
     }
 
-    fun createDataBase(context: Context): MovieDatabase {
+//    fun createLocalDataSourceForFavs(context: Context): LocalDataSourceManager {
+//        val database = database ?: createDataBase(context)
+//        return LocalDataSourceManager(null, database.favouriteDao())
+//    }
+
+
+    private fun createDataBase(context: Context): MovieDatabase {
         val result = Room.databaseBuilder(
             context.applicationContext,
             MovieDatabase::class.java, "MovieDb"

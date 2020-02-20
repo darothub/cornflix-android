@@ -21,13 +21,30 @@ class MovieViewModel(private val moviesRepoInterface: MoviesRepoInterface): View
 
     var fireModel = MutableLiveData<Boolean>(false)
 
+    suspend fun loadMovies(context: Context, page: Int){
+        moviesRepoInterface.getMovies(true, context, page)
+    }
+
     suspend fun getAllMovies(context: Context):LiveData<List<MovieEntity>>{
         fireModel.value = true
-        return moviesRepoInterface.getMovies(true, context)
+        var localData:LiveData<List<MovieEntity>> = moviesRepoInterface.getMovies(false, context)
+
+//        if(localData.value?.get(0)?.movieId.isNullOrEmpty()){
+//            Log.i("viewmodelLRemoteBfr", "${localData.value?.get(0)?.movieId}")
+//            localData = moviesRepoInterface.getMovies(true, context)
+//            Log.i("viewmodelRemoteAfter", "${localData.value?.get(0)?.movieId}")
+//        }
+//        else{
+//            Log.i("viewmodelLocaldataBf", "${localData.value?.get(0)?.movieId}")
+//            localData = moviesRepoInterface.getMovies(false, context)
+//            Log.i("viewmodelLocaldataAf", "${localData.value?.get(0)?.movieId}")
+//        }
+        return localData
         Log.i("viewmodel", "called")
     }
 
-    suspend fun getAllFavMovies(context: Context):LiveData<List<FavouriteMoviesEntity>>{
+
+    suspend fun getAllFavMovies(context: Context): LiveData<List<FavouriteMoviesEntity>>? {
         val result = moviesRepoInterface.getFavMovies(context)
         Result.Success(result)
         return result

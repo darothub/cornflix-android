@@ -1,44 +1,35 @@
 package com.darotapp.cornflix.data.repository
 
-import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
-import androidx.room.Room
 import com.darotapp.cornflix.data.Result
 import com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.data.local.database.LocalDataSourceManager
-import com.darotapp.cornflix.data.local.database.MovieDatabase
 import com.darotapp.cornflix.data.local.database.MovieEntity
-import com.darotapp.cornflix.data.network.RemoteDataSourceManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.withContext
+import com.darotapp.cornflix.data.remote.RemoteDataSourceManager
 
 class MovieRepository(
     private val remoteDataSourceManager: RemoteDataSourceManager,
     private val localDataSourceManager: LocalDataSourceManager
 ) : MoviesRepoInterface {
     override suspend fun getMovies(
-        forceUpdate: Boolean,
-        context: Context
+        fetch: Boolean,
+        context: Context,
+        page:Int?
     ):LiveData<List<MovieEntity>> {
-        val responseList:LiveData<List<MovieEntity>>
-        if(forceUpdate ){
-            val result = remoteDataSourceManager.getMovies(context)
-            responseList = result
+        var responseList:LiveData<List<MovieEntity>>
+        if(fetch){
+            responseList = page?.let { remoteDataSourceManager.getMovies(context, it) }!!
+
+            Result.Success(responseList)
             Log.i("MovieRepo", "remote")
-//            result.observeForever {
-//                Log.i("MovieRepo", "${it.get(0).title}")
-//            }
         }
         else{
-            val result = localDataSourceManager.getMovies(context)
-            responseList = result
+
+            responseList = localDataSourceManager.getMovies(context, page)!!
 //            val size = result.value?.size
-            Result.Success(result)
+            Result.Success(responseList)
             Log.i("MovieRepo", "local")
 //            localDataSourceManager.getMovies(context)
 //            result.observeForever {
@@ -50,7 +41,7 @@ class MovieRepository(
         return responseList
     }
 
-    override suspend fun getFavMovies(context: Context): LiveData<List<FavouriteMoviesEntity>> {
+    override suspend fun getFavMovies(context: Context): LiveData<List<FavouriteMoviesEntity>>? {
         val result = localDataSourceManager.getFavouriteMovies(context)
         Result.Success(result)
         return result

@@ -1,6 +1,7 @@
 package com.darotapp.cornflix.ui
 
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -68,10 +69,11 @@ class AllMoviesFragment : Fragment() {
 //        Toast.makeText(context, "onActivity created", Toast.LENGTH_SHORT).show()
         recyclerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_movies)
 
-        val movieEntity = MovieEntity("Rising", "rising.jpg", 3, "Wloooo", "jan 2020")
+//        val movieEntity = MovieEntity("Rising", "rising.jpg", 3, "Wloooo", "jan 2020")
 
 
 
+        loadData(context!!, 2)
         observeAndSetData()
         swipeItemTouchHelper()
         navigateToFavourite()
@@ -79,18 +81,25 @@ class AllMoviesFragment : Fragment() {
 
     }
 
+    private fun loadData(context: Context, page:Int){
+        CoroutineScope(IO).launch {
+            movieViewModel.loadMovies(context, page)
+        }
+    }
+
     private fun observeAndSetData() {
 
         CoroutineScope(Main).launch {
             val res = movieViewModel.getAllMovies(context!!)
             res.observeForever {
-                Log.i("allFragment", "${it.get(0).title}")
+//                Log.i("allFragment", "${it.get(0).title}")
                 setDataIntoAdapter(it)
                 recyclerView?.layoutManager =
                     StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
                 recyclerView?.setHasFixedSize(true)
                 recyclerView?.adapter = movieAdapter
-                movieAdapter?.setMovie(it)
+
+//                movieAdapter?.setMovie(it)
             }
 
         }
@@ -108,15 +117,9 @@ class AllMoviesFragment : Fragment() {
                 var favMovie = convertToFavourityEntity(movieEntity)
 
 
-
-                convertToFavourityEntity(movieEntity)
-
-                favMovie.movieId = movieEntity.movieId
-                favMovie.id = movieEntity.id
                 if (fav.visibility == View.GONE) {
                     fav.visibility = View.VISIBLE
-                    movieEntity.favourite = true
-                    favMovie.favourite = movieEntity.favourite
+
 
                     CoroutineScope(Main).launch {
 
@@ -200,13 +203,15 @@ class AllMoviesFragment : Fragment() {
     }
 
     private suspend fun insertAndUpdate(favMovie: FavouriteMoviesEntity, movieEntity: MovieEntity) {
-        ServiceLocator.createDataBase(context!!).movieDao().update(movieEntity)
-        ServiceLocator.createDataBase(context!!).favouriteDao().insert(favMovie)
+        MovieDatabase.getInstance(context!!)?.movieDao()?.update(movieEntity)
+        MovieDatabase.getInstance(context!!)?.favouriteDao()?.insert(favMovie)
 
     }
 
     //
     fun convertToFavourityEntity(movieEntity: MovieEntity): FavouriteMoviesEntity {
+        movieEntity.favourite = true
+
         val (title, movieImage, rating, overView, releaseDate) = movieEntity
         val favMovie = FavouriteMoviesEntity(
             title,
@@ -215,6 +220,9 @@ class AllMoviesFragment : Fragment() {
             overView,
             releaseDate
         )
+        favMovie.movieId = movieEntity.movieId
+        favMovie.id = movieEntity.movieId?.toInt() ?: movieEntity.id!!
+        favMovie.favourite = movieEntity.favourite
         return favMovie
     }
 
@@ -250,9 +258,11 @@ class AllMoviesFragment : Fragment() {
 
     //
     private suspend fun deleteAndUpdate(favMovie: FavouriteMoviesEntity, movieEntity: MovieEntity) {
-
-        ServiceLocator.createDataBase(context!!).favouriteDao().delete(favMovie)
-        ServiceLocator.createDataBase(context!!).movieDao().update(movieEntity)
+//
+//        ServiceLocator.createLocalDataSource(context!!).favouriteDao?.delete(favMovie)
+//        ServiceLocator.createLocalDataSource(context!!).movieDao?.update(movieEntity)
+        MovieDatabase.getInstance(context!!)?.movieDao()?.update(movieEntity)
+        MovieDatabase.getInstance(context!!)?.favouriteDao()?.delete(favMovie)
 
     }
 }
