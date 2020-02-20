@@ -2,28 +2,21 @@ package com.darotapp.cornflix.ui
 
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
 import com.darotapp.cornflix.R
 import com.darotapp.cornflix.adapters.SwipeAdapter
 import com.darotapp.cornflix.data.viewmodel.MovieViewModel
-import com.darotapp.cornflix.model.database.MovieDatabase
-import com.darotapp.cornflix.model.database.MovieEntity
+import com.github.nisrulz.sensey.Sensey
+import com.github.nisrulz.sensey.ShakeDetector.ShakeListener
 import kotlinx.android.synthetic.main.fragment_landing.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
+
 
 /**
  * A simple [Fragment] subclass.
@@ -38,12 +31,23 @@ class LandingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        
         return inflater.inflate(R.layout.fragment_landing, container, false)
     }
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+//        val draw = DrawableBuilder()
+//            .rectangle()
+//            .rounded()
+//            .solidColor(resources.getColor(R.color.colorPrimary))
+//            .gradientColors(resources.getColor(R.color.colorPrimary), resources.getColor(R.color.darkGreen), null)
+//            .solidColorPressed(resources.getColor(R.color.darkGreen))
+//            .build()
+//
+//        btn.background = draw
 
 
         recycler_view.layoutManager = LinearLayoutManager(context)
@@ -61,7 +65,7 @@ class LandingFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-              Toast.makeText(context, "swiped left", Toast.LENGTH_LONG).show()
+//              Toast.makeText(context, "swiped left", Toast.LENGTH_LONG).show()
 
 
                 val action = LandingFragmentDirections.toFavouriteMovies()
@@ -97,9 +101,15 @@ class LandingFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+
+
 //        Toast.makeText(context, "started", Toast.LENGTH_LONG).show()
 
 
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }

@@ -16,10 +16,18 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:fontFamily">@font/montserrat_alternates</item>
+
+    </style>
+
+
+    <style name="AppThemeTwo.NoActionBar" parent="AppTheme.NoActionBar">
+
+        <item name="android:windowTranslucentStatus">false</item>
+
 
     </style>
 </resources>

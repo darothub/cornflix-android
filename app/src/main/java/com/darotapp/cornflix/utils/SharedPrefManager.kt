@@ -1,7 +1,7 @@
 package com.darotapp.cornflix.utils
 
 import android.content.Context
-import com.darotapp.cornflix.model.database.MovieEntity
+import com.darotapp.cornflix.data.local.database.MovieEntity
 import com.google.gson.GsonBuilder
 
 class SharedPrefManager(val context: Context?) {
@@ -15,7 +15,7 @@ class SharedPrefManager(val context: Context?) {
                 }
         }
 
-        fun saveData(context: Context?, movieEntity: MovieEntity, key: String? = null): String {
+        fun <T> saveData(context: Context?, movieEntity: MovieEntity, key: T): String {
             val result: String
 //           val  sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
             val sharedPrefs = context?.getSharedPreferences("secret", Context.MODE_PRIVATE)!!
@@ -26,14 +26,14 @@ class SharedPrefManager(val context: Context?) {
 
             sharedPrefs.edit()
                 .apply {
-                    putString(key, json)
+                    putString(key.toString(), json)
                     putString("movie", json)
                     apply()
                 }
             return result
         }
 
-        fun getData(context: Context?, movieEntity: String): MovieEntity? {
+        fun <T> getData(context: T?, movieEntity: String): MovieEntity? {
 
 //           val  sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
             val gsonInstance = GsonBuilder().create()

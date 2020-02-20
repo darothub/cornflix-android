@@ -13,11 +13,13 @@
         <action
             android:id="@+id/toAllMovies"
             app:destination="@id/allMoviesFragment"
-            app:enterAnim="@anim/fragment_close_enter"
-            app:exitAnim="@anim/fragment_close_enter" />
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
         <action
             android:id="@+id/toFavouriteMovies"
-            app:destination="@id/favouriteMoviesFragment" />
+            app:destination="@id/favouriteMoviesFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
     </fragment>
     <fragment
         android:id="@+id/allMoviesFragment"
@@ -25,10 +27,15 @@
         tools:layout="@layout/fragment_all_movies">
         <action
             android:id="@+id/toMovieDetails"
-            app:destination="@id/movieDetailsFragment" />
+            app:destination="@id/movieDetailsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@+id/allMoviesFragment" />
         <action
             android:id="@+id/toFavouritePage"
-            app:destination="@id/favouriteMoviesFragment" />
+            app:destination="@id/favouriteMoviesFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
     </fragment>
     <fragment
         android:id="@+id/favouriteMoviesFragment"
@@ -36,7 +43,9 @@
         tools:layout="@layout/fragment_favourite_movies" >
         <action
             android:id="@+id/action_favouriteMoviesFragment_to_movieDetailsFragment"
-            app:destination="@id/movieDetailsFragment" />
+            app:destination="@id/movieDetailsFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_open_exit" />
     </fragment>
     <fragment
         android:id="@+id/movieDetailsFragment"
@@ -44,13 +53,13 @@
         tools:layout="@layout/fragment_movie_details">
         <argument
             android:name="movie"
-            android:defaultValue="@null"
-            app:argType="com.darotapp.cornflix.model.database.MovieEntity"
-            app:nullable="true" />
+            app:argType="com.darotapp.cornflix.data.local.database.MovieEntity"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <argument
             android:name="favMovie"
-            android:defaultValue="@null"
-            app:argType="com.darotapp.cornflix.model.database.FavouriteMoviesEntity"
-            app:nullable="true" />
+            app:argType="com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 </navigation>

@@ -4,7 +4,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="swipe">Swipe  me</string>
-    <string name="swipe_advise">Swipe the button below right for All movies  \nor swipe left for your favourites</string>
+    <string name="swipe_advise">Swipe the image below right for All movies  \nor swipe left for your favourites</string>
     <string name="released">Released: </string>
     <string name="rating">Rating: </string>
     <string name="top_rated">Top rated</string>
