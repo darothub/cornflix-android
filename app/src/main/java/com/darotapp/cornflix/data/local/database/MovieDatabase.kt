@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
 abstract class MovieDatabase:RoomDatabase() {
 
     abstract fun movieDao():MovieDao
-    abstract fun favouriteDao():FavouriteDao
+
 
 //    companion object{
 //        @Volatile

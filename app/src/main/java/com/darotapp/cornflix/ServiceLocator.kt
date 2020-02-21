@@ -33,7 +33,7 @@ object ServiceLocator {
 
     fun createLocalDataSource(context: Context): LocalDataSourceManager {
         val database = database ?: createDataBase(context)
-        return LocalDataSourceManager(database.movieDao(), database.favouriteDao())
+        return LocalDataSourceManager(database.movieDao())
     }
 
 //    fun createLocalDataSourceForFavs(context: Context): LocalDataSourceManager {

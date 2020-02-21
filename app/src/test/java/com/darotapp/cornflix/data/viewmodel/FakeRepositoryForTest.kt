@@ -40,7 +40,7 @@ class FakeRepositoryForTest(
         return responseList
     }
 
-    override suspend fun getFavMovies(context: Context): LiveData<List<FavouriteMoviesEntity>>? {
+    override suspend fun getFavMovies(context: Context): LiveData<List<MovieEntity>>? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_movie_details.appBar
  */
 class MovieDetailsFragment : Fragment() {
     var incomingMovie:MovieEntity?=null
-    var fromFav:FavouriteMoviesEntity?=null
+//    var fromFav:FavouriteMoviesEntity?=null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,10 +53,10 @@ class MovieDetailsFragment : Fragment() {
         //Receives arguments from other fragment
         arguments?.let{
             incomingMovie = MovieDetailsFragmentArgs.fromBundle(it).movie
-            fromFav = MovieDetailsFragmentArgs.fromBundle(it).favMovie
+//            fromFav = MovieDetailsFragmentArgs.fromBundle(it).favMovie
         }
         val ratingValue =incomingMovie?.rating?.div(2)?.toFloat()
-        val ratingValue2 =fromFav?.rating?.div(2)?.toFloat()
+//        val ratingValue2 =fromFav?.rating?.div(2)?.toFloat()
 
         image.transitionName = incomingMovie?.movieId
         overView.transitionName = "overView"
@@ -76,16 +76,16 @@ class MovieDetailsFragment : Fragment() {
             }
             Picasso.get().load(it.movieImage).into(image)
         }
-        fromFav?.let {
-            if (it.favourite) redFav.visibility = View.VISIBLE
-            overView.setText(it.overView)
-            releaseDate.append(" ${it?.releaseDate}")
-            rating.append(" $ratingValue2")
-            ratingValue2?.let {
-                ratingBar.rating = it
-            }
-            Picasso.get().load(it.movieImage).into(image)
-        }
+//        fromFav?.let {
+//            if (it.favourite) redFav.visibility = View.VISIBLE
+//            overView.setText(it.overView)
+//            releaseDate.append(" ${it?.releaseDate}")
+//            rating.append(" $ratingValue2")
+//            ratingValue2?.let {
+//                ratingBar.rating = it
+//            }
+//            Picasso.get().load(it.movieImage).into(image)
+//        }
 
 
 

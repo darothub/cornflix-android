@@ -7,7 +7,7 @@ import com.darotapp.cornflix.data.Result.Success
 import com.darotapp.cornflix.data.ServiceCall
 import com.darotapp.cornflix.ServiceLocator
 
-class LocalDataSourceManager(internal val movieDao: MovieDao?, internal var favouriteDao: FavouriteDao?) : ServiceCall {
+class LocalDataSourceManager(internal val movieDao: MovieDao?) : ServiceCall {
     override suspend fun getMovies(context: Context, page: Int?): LiveData<List<MovieEntity>>? {
         val result =ServiceLocator.createLocalDataSource(context).movieDao?.allMovies
 //            MovieDatabase.getInstance(context)?.movieDao()?.allMovies
