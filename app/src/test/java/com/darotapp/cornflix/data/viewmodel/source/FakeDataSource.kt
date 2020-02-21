@@ -16,8 +16,8 @@ class FakeDataSource <T>(var movies: MutableList<T>?):
         return result
     }
 
-    override suspend fun getFavouriteMovies(context: Context): LiveData<List<FavouriteMoviesEntity>>? {
-        return movies as LiveData<List<FavouriteMoviesEntity>>
+    override suspend fun getFavouriteMovies(context: Context): LiveData<List<MovieEntity>>? {
+        return movies as LiveData<List<MovieEntity>>
     }
 
 }

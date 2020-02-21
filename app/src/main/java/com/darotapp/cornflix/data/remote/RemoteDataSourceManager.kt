@@ -25,9 +25,7 @@ class RemoteDataSourceManager : ServiceCall {
         return getRemoteMovies(context, page)
     }
 
-    override suspend fun getFavouriteMovies(context: Context): LiveData<List<FavouriteMoviesEntity>>? {
-        return super.getFavouriteMovies(context)
-    }
+
 
 
 
