@@ -12,8 +12,12 @@ interface ServiceCall {
         var go =MutableLiveData<List<MovieEntity>>()
         return go
     }
-    suspend fun getFavouriteMovies(context: Context): LiveData<List<FavouriteMoviesEntity>>? {
-        var go =MutableLiveData<List<FavouriteMoviesEntity>>()
+    suspend fun getFavouriteMovies(context: Context): LiveData<List<MovieEntity>>? {
+        var go =MutableLiveData<List<MovieEntity>>()
         return go
+    }
+
+    suspend fun getMovieList(context: Context):List<MovieEntity>{
+        return listOf(MovieEntity(null, null, null, null, null))
     }
 }

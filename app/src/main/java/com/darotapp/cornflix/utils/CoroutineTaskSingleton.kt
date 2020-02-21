@@ -1,8 +1,6 @@
 package com.darotapp.cornflix.utils
 
 import android.app.Application
-import com.darotapp.cornflix.data.local.database.FavouriteDao
-import com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.data.local.database.MovieDao
 import com.darotapp.cornflix.data.local.database.MovieEntity
 import kotlinx.coroutines.CoroutineScope
@@ -42,10 +40,5 @@ class CoroutineTaskSingleton (application: Application) {
         }
     }
 
-    fun insertFav(favouriteDao: FavouriteDao, favouriteMoviesEntity: FavouriteMoviesEntity){
-        CoroutineScope(Dispatchers.IO).launch {
-            favouriteDao.insert(favouriteMoviesEntity)
-        }
-    }
 
 }
