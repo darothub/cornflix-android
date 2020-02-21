@@ -13,11 +13,17 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 
 import com.darotapp.cornflix.R
+import com.darotapp.cornflix.ServiceLocator
 import com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.data.local.database.MovieEntity
+import com.pedromassango.doubleclick.DoubleClick
+import com.pedromassango.doubleclick.DoubleClickListener
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_movie_details.*
 import kotlinx.android.synthetic.main.fragment_movie_details.appBar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
@@ -50,14 +56,14 @@ class MovieDetailsFragment : Fragment() {
 
         val nav = Navigation.findNavController(appBar)
         NavigationUI.setupWithNavController(toolBar, nav)
-        //Receives arguments from other fragment
+
+        //Receives arguments(safeArgs) from other fragment
         arguments?.let{
             incomingMovie = MovieDetailsFragmentArgs.fromBundle(it).movie
-//            fromFav = MovieDetailsFragmentArgs.fromBundle(it).favMovie
         }
-        val ratingValue =incomingMovie?.rating?.div(2)?.toFloat()
-//        val ratingValue2 =fromFav?.rating?.div(2)?.toFloat()
 
+
+        //Receiving Navigator extras
         image.transitionName = incomingMovie?.movieId
         overView.transitionName = "overView"
         overView.alignment = Paint.Align.LEFT
@@ -65,7 +71,15 @@ class MovieDetailsFragment : Fragment() {
 
 
 
+        settingInIncomingMovie()
+        addToFavFunction()
 
+
+
+    }
+
+    private fun settingInIncomingMovie() {
+        val ratingValue =incomingMovie?.rating?.div(2)?.toFloat()
         incomingMovie?.let {
             if (it.favourite) redFav.visibility = View.VISIBLE
             overView.setText(it.overView)
@@ -76,24 +90,29 @@ class MovieDetailsFragment : Fragment() {
             }
             Picasso.get().load(it.movieImage).into(image)
         }
-//        fromFav?.let {
-//            if (it.favourite) redFav.visibility = View.VISIBLE
-//            overView.setText(it.overView)
-//            releaseDate.append(" ${it?.releaseDate}")
-//            rating.append(" $ratingValue2")
-//            ratingValue2?.let {
-//                ratingBar.rating = it
-//            }
-//            Picasso.get().load(it.movieImage).into(image)
-//        }
+    }
 
+    private fun addToFavFunction() {
+        image.setOnClickListener(DoubleClick(object :DoubleClickListener{
+            override fun onDoubleClick(view: View?) {
+                redFav.visibility = View.VISIBLE
+                incomingMovie?.favourite = true
+                CoroutineScope(IO).launch {
+                    ServiceLocator.createLocalDataSource(context!!).movieDao?.update(incomingMovie as MovieEntity)
+                }
 
+            }
 
+            override fun onSingleClick(view: View?) {
+                redFav.visibility = View.GONE
+                incomingMovie?.favourite = false
+                CoroutineScope(IO).launch {
+                    ServiceLocator.createLocalDataSource(context!!).movieDao?.update(incomingMovie as MovieEntity)
+                }
 
+            }
 
-
-
-
+        }))
     }
 //
 

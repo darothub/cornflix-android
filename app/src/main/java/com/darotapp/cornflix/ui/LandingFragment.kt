@@ -16,6 +16,8 @@ import com.darotapp.cornflix.data.viewmodel.MovieViewModel
 import com.github.nisrulz.sensey.Sensey
 import com.github.nisrulz.sensey.ShakeDetector.ShakeListener
 import kotlinx.android.synthetic.main.fragment_landing.*
+import kotlinx.android.synthetic.main.swipe_recycler_item.*
+import top.defaults.drawabletoolbox.DrawableBuilder
 
 
 /**
@@ -39,21 +41,42 @@ class LandingFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-//        val draw = DrawableBuilder()
-//            .rectangle()
-//            .rounded()
-//            .solidColor(resources.getColor(R.color.colorPrimary))
-//            .gradientColors(resources.getColor(R.color.colorPrimary), resources.getColor(R.color.darkGreen), null)
-//            .solidColorPressed(resources.getColor(R.color.darkGreen))
-//            .build()
-//
-//        btn.background = draw
 
 
+
+
+        //set recyclerView Layout
+        setRecyclerViewLayout()
+        //Swipe listener for left swipe(to delete)
+        swipeOnItemTouchHelper()
+
+
+
+
+
+    }
+
+    /**Not in use**/
+    private fun customDrawable() {
+        val draw = DrawableBuilder()
+            .rectangle()
+            .rounded()
+            .solidColor(resources.getColor(R.color.colorPrimary))
+            .gradientColors(resources.getColor(R.color.colorPrimary), resources.getColor(R.color.darkGreen), null)
+            .solidColorPressed(resources.getColor(R.color.darkGreen))
+            .build()
+
+        btn.background = draw
+    }
+
+    private fun setRecyclerViewLayout() {
         recycler_view.layoutManager = LinearLayoutManager(context)
         recycler_view.setHasFixedSize(true)
         recycler_view.adapter = SwipeAdapter()
 
+    }
+
+    private fun swipeOnItemTouchHelper() {
         //Swipe listener for left swipe(to delete)
         ItemTouchHelper(object :ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT){
             override fun onMove(
@@ -65,8 +88,6 @@ class LandingFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//              Toast.makeText(context, "swiped left", Toast.LENGTH_LONG).show()
-
 
                 val action = LandingFragmentDirections.toFavouriteMovies()
                 Navigation.findNavController(recycler_view).navigate(action)
@@ -92,24 +113,6 @@ class LandingFragment : Fragment() {
 
         }).attachToRecyclerView(recycler_view)
 
-
-
-
-
     }
 
-    override fun onStart() {
-        super.onStart()
-
-
-
-//        Toast.makeText(context, "started", Toast.LENGTH_LONG).show()
-
-
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 }

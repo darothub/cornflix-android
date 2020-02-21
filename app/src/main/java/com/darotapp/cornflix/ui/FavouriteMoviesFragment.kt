@@ -9,7 +9,6 @@ import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -18,11 +17,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.darotapp.cornflix.MovieApplication
 import com.darotapp.cornflix.R
 import com.darotapp.cornflix.ServiceLocator
-import com.darotapp.cornflix.adapters.FavouriteMoviesAdapter
 import com.darotapp.cornflix.adapters.MovieAdapter
 import com.darotapp.cornflix.data.viewmodel.MovieViewModel
-import com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity
-import com.darotapp.cornflix.data.local.database.MovieDatabase
 import com.darotapp.cornflix.data.local.database.MovieEntity
 import com.darotapp.cornflix.data.viewmodel.MovieViewModelfactory
 import com.google.android.material.snackbar.Snackbar
@@ -41,6 +37,8 @@ class FavouriteMoviesFragment : Fragment() {
 
     var favMovieAdapter: MovieAdapter<MovieEntity>? = null
     private var recyclerView: RecyclerView? = null
+
+    //Viewmodel factory to instantiate MovieVieModel
     private val movieViewModel by viewModels<MovieViewModel> {
         MovieViewModelfactory((requireContext().applicationContext as MovieApplication).moviesRepoInterface)
     }
@@ -50,6 +48,7 @@ class FavouriteMoviesFragment : Fragment() {
     ): View? {
 
         observeAndSetData()
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_favourite_movies, container, false)
     }
@@ -61,9 +60,11 @@ class FavouriteMoviesFragment : Fragment() {
         val nav = Navigation.findNavController(appBar)
         NavigationUI.setupWithNavController(favToolbar, nav)
 
+        //Getting recyclerView
         recyclerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_fav)
 
 
+        //On back press
         requireActivity().onBackPressedDispatcher.addCallback(this, object :OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
                 findNavController().navigate(R.id.landingFragment)
@@ -82,7 +83,7 @@ class FavouriteMoviesFragment : Fragment() {
                 movieViewModel.getAllFavMovies(context!!)?.observeForever { list ->
 
                     if (list.isNullOrEmpty()) {
-//                    Toast.makeText(context, "You have not added any movie", Toast.LENGTH_SHORT).show()
+
                         try {
                             placeHolderFav.visibility = View.VISIBLE
                             recyclerView?.visibility = View.GONE
@@ -92,7 +93,9 @@ class FavouriteMoviesFragment : Fragment() {
                         } catch (e: Exception) {
                         }
                     } else {
+                        //set data into adapter
                         setDataIntoAdapter(list)
+                        //set recycler view layout
                         setRecyclerViewLayoutManager(list)
 
                     }
@@ -111,9 +114,6 @@ class FavouriteMoviesFragment : Fragment() {
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         recyclerView?.setHasFixedSize(true)
         recyclerView?.adapter = favMovieAdapter
-
-
-//        favMovieAdapter?.setMovie(list)
     }
 
     private fun setDataIntoAdapter(list: List<MovieEntity?>?) {
@@ -126,11 +126,8 @@ class FavouriteMoviesFragment : Fragment() {
                     movieEntity.favourite = false
 
                     CoroutineScope(Dispatchers.Main).launch {
-                        actAndUpdateChanges(movieEntity)
+                        updateChangesAndReact(movieEntity)
                     }
-//                    findNavController().navigate(R.id.favouriteMoviesFragment)
-
-
                     FancyToast.makeText(
                         context,
                         "${movieEntity.title} is removed from favourite",
@@ -138,7 +135,6 @@ class FavouriteMoviesFragment : Fragment() {
                         FancyToast.INFO,
                         true
                     ).show()
-//                            Toast.makeText(context, "${movieEntity.title} has been removed", Toast.LENGTH_SHORT).show()
 
                 }
 
@@ -159,7 +155,8 @@ class FavouriteMoviesFragment : Fragment() {
         }
     }
 
-    suspend fun actAndUpdateChanges(updatedMovie: MovieEntity) {
+    suspend fun updateChangesAndReact(updatedMovie: MovieEntity) {
+
         ServiceLocator.createLocalDataSource(context!!).movieDao?.update(updatedMovie)
         favMovieAdapter?.notifyDataSetChanged()
     }

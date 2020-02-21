@@ -9,22 +9,4 @@ import androidx.room.RoomDatabase
 abstract class MovieDatabase:RoomDatabase() {
 
     abstract fun movieDao():MovieDao
-
-
-//    companion object{
-//        @Volatile
-//        private var instance:MovieDatabase? = null
-//
-//        fun getInstance(context: Context):MovieDatabase?{
-//            if(instance == null){
-//                instance = Room.databaseBuilder(
-//                    context.applicationContext,
-//                    MovieDatabase::class.java, "movie_database"
-//                )
-//                    .fallbackToDestructiveMigration()
-//                    .build()
-//            }
-//            return instance
-//        }
-//    }
 }

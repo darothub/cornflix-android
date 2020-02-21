@@ -33,11 +33,10 @@ import com.darotapp.cornflix.data.viewmodel.MovieViewModelfactory
 import com.google.android.material.snackbar.Snackbar
 import com.shashank.sony.fancytoastlib.FancyToast
 import kotlinx.android.synthetic.main.fragment_all_movies.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 /**
  * A simple [Fragment] subclass.
@@ -48,8 +47,9 @@ class AllMoviesFragment : Fragment() {
     var recyclerView: RecyclerView? = null
     var movies:List<MovieEntity>?=null
     var movieTitleList:List<String?>? = null
-    var movieEntityList:ArrayList<MovieEntity> = ArrayList()
-    lateinit var textOnScreen:String
+
+
+    //View model factory to inject or instantiate movieViewModel
     private val movieViewModel by viewModels<MovieViewModel> {
         MovieViewModelfactory((requireContext().applicationContext as MovieApplication).moviesRepoInterface)
     }
@@ -58,10 +58,12 @@ class AllMoviesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
 
+
+        //Observe live data and set into adapter
         observeAndSetData()
 
+        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_all_movies, container, false)
     }
 
@@ -74,19 +76,31 @@ class AllMoviesFragment : Fragment() {
         val nav = Navigation.findNavController(post_appbar)
         NavigationUI.setupWithNavController(allMoviesToolbar, nav)
 
-//        Toast.makeText(context, "onActivity created", Toast.LENGTH_SHORT).show()
+        //Getting recyclerview
         recyclerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_movies)
 
-//        val movieEntity = MovieEntity("Rising", "rising.jpg", 3, "Wloooo", "jan 2020")
 
-
-
+        //Function to load data
         loadData(context!!, 2)
 
+        // function for recyclerView ItemTouchHelper
         swipeItemTouchHelper()
+        //function to navigate to favourite fragment
         navigateToFavourite()
 
-         textOnScreen = searchEditText.text.toString()
+        // function to search
+        searchFun()
+
+//        Log.i("onacti", "text $textOnScreen")
+
+
+        loadMoreMovies()
+
+
+
+    }
+
+    private fun searchFun() {
         searchEditText.setOnFocusChangeListener { v, hasFocus ->
             if(hasFocus){
                 topRatedText.visibility = View.GONE
@@ -96,59 +110,96 @@ class AllMoviesFragment : Fragment() {
             }
         }
         CoroutineScope(Main).launch {
-            movies = ServiceLocator.createLocalDataSource(context!!).movieDao?.getMovies()
-            movieTitleList = movies?.map {
-                it.title
-            }
-            Log.i("size", "${movies?.size}")
-            var autoCompleteAdapter = movieTitleList?.toList()?.let {
-                ArrayAdapter(context!!, android.R.layout.simple_list_item_1,
-                    it
-                )
-            }
-            searchEditText.setAdapter(autoCompleteAdapter)
-            searchBtn.setOnClickListener {
-                val text = searchEditText.text.toString()
-                if(text.isNotEmpty()){
+            try {
 
-                    val selectedMovie = movies?.find {
-                        text == it.title
-                    }
+                //Get movies available
+                movies = getLocalMovieList()
 
-                    if (selectedMovie != null) {
-                        searchEditText.text.clear()
-                        gotoDetails(selectedMovie)
-
-
-                    }
+                // Extract title of movies
+                movieTitleList = movies?.map {
+                    it.title
                 }
-                else{
-                    return@setOnClickListener
-                }
+
+                //Autocompelete TextView adapter
+                setAutocompleteTextAdapter(movieTitleList as List<String>)
+                searchBtnBehaviourOnclick(movies as List<MovieEntity>)
             }
+            catch (e:Exception){
+                Log.i("searchFunErr", "${e.message}")
+            }
+
+
 
 
 
 
         }
 
-        Log.i("onacti", "text $textOnScreen")
-
-
-
     }
 
-    override fun onStart() {
-        super.onStart()
-        Log.i("start", "text $textOnScreen")
+    private suspend fun getLocalMovieList():List<MovieEntity> {
+        val localMovies = ServiceLocator.createLocalDataSource(context!!).movieDao?.getMovies()
+        return localMovies as List<MovieEntity>
     }
+
+    private fun searchBtnBehaviourOnclick(movies:List<MovieEntity>) {
+        searchBtn.setOnClickListener {
+            val text = searchEditText.text.toString()
+            if(text.isNotEmpty()){
+
+                val selectedMovie = movies.find {
+                    text == it.title
+                }
+
+                if (selectedMovie != null) {
+                    searchEditText.text.clear()
+                    gotoDetails(selectedMovie)
+
+                }
+            }
+            else{
+                return@setOnClickListener
+            }
+        }
+    }
+
+    private fun setAutocompleteTextAdapter(moviesTitleList:List<String>) {
+        var autoCompleteAdapter = ArrayAdapter(context!!, android.R.layout.simple_list_item_1,
+            moviesTitleList.toList()
+        )
+        searchEditText.setAdapter(autoCompleteAdapter)
+    }
+
 
     private fun loadData(context: Context, page:Int){
+
+
         CoroutineScope(IO).launch {
             movieViewModel.loadMovies(context, page)
         }
+
     }
 
+    private fun loadMoreMovies(){
+
+        swipeLayout.setOnRefreshListener {
+            var pageNum =  Random.nextInt(1, 100)
+            CoroutineScope(Main).launch {
+                recyclerView?.visibility  = View.GONE
+                withContext(IO){
+                    movieViewModel.loadMovies(context!!, pageNum)
+                }
+
+                Log.i("page", "$pageNum")
+
+                delay(3000)
+                swipeLayout.isRefreshing = false
+                recyclerView?.visibility  = View.VISIBLE
+
+
+            }
+        }
+    }
     private fun observeAndSetData() {
 
         CoroutineScope(Main).launch {
