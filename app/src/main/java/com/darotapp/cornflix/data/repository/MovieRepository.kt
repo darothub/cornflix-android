@@ -48,6 +48,12 @@ class MovieRepository(
         return result
     }
 
+    override suspend fun getMoviesList(context: Context): List<MovieEntity> {
+        val result = localDataSourceManager.getMovieList(context)
+        Result.Success(result)
+        return result
+    }
+
 //    private fun fetchRemotely(){
 //
 //    }

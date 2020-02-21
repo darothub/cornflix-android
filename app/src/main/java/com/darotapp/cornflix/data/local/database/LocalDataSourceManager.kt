@@ -22,5 +22,11 @@ class LocalDataSourceManager(internal val movieDao: MovieDao?) : ServiceCall {
         return result
     }
 
+    override suspend fun getMovieList(context: Context): List<MovieEntity> {
+        val result = ServiceLocator.createLocalDataSource(context).movieDao?.getMoviesList()
+        Success(result)
+        return result as List<MovieEntity>
+    }
+
 
 }

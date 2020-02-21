@@ -16,7 +16,7 @@ interface MovieDao {
     suspend fun delete(movieEntity: MovieEntity)
 
     @Query("SELECT * FROM movieentity")
-    suspend fun getMovies(): List<MovieEntity>
+    suspend fun getMoviesList(): List<MovieEntity>
 
 
     @get:Query(

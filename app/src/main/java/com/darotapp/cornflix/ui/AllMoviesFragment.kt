@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -47,6 +48,7 @@ class AllMoviesFragment : Fragment() {
     var recyclerView: RecyclerView? = null
     var movies:List<MovieEntity>?=null
     var movieTitleList:List<String?>? = null
+    var observable:MutableLiveData<List<MovieEntity>> = MutableLiveData<List<MovieEntity>>()
 
 
     //View model factory to inject or instantiate movieViewModel
@@ -60,8 +62,7 @@ class AllMoviesFragment : Fragment() {
     ): View? {
 
 
-        //Observe live data and set into adapter
-        observeAndSetData()
+        observable = MutableLiveData()
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_all_movies, container, false)
@@ -79,9 +80,11 @@ class AllMoviesFragment : Fragment() {
         //Getting recyclerview
         recyclerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_movies)
 
-
         //Function to load data
-        loadData(context!!, 2)
+        loadData(context!!, 1)
+
+        //Observe live data and set into adapter
+        observeAndSetData()
 
         // function for recyclerView ItemTouchHelper
         swipeItemTouchHelper()
@@ -109,36 +112,35 @@ class AllMoviesFragment : Fragment() {
                 topRatedText.visibility = View.VISIBLE
             }
         }
-        CoroutineScope(Main).launch {
-            try {
+        observable.observeForever {
 
-                //Get movies available
-                movies = getLocalMovieList()
+            CoroutineScope(Main).launch {
 
+                movies = it
+
+                Log.i("movieSize", "${movies?.size}")
                 // Extract title of movies
                 movieTitleList = movies?.map {
                     it.title
                 }
 
+
                 //Autocompelete TextView adapter
                 setAutocompleteTextAdapter(movieTitleList as List<String>)
                 searchBtnBehaviourOnclick(movies as List<MovieEntity>)
+
+
             }
-            catch (e:Exception){
-                Log.i("searchFunErr", "${e.message}")
-            }
 
-
-
-
-
+            //Get movies available
 
         }
 
     }
 
     private suspend fun getLocalMovieList():List<MovieEntity> {
-        val localMovies = ServiceLocator.createLocalDataSource(context!!).movieDao?.getMovies()
+        val localMovies = ServiceLocator.createLocalDataSource(context!!).movieDao?.getMoviesList()
+        Log.i("movieSize", "${localMovies?.size}")
         return localMovies as List<MovieEntity>
     }
 
@@ -168,6 +170,7 @@ class AllMoviesFragment : Fragment() {
             moviesTitleList.toList()
         )
         searchEditText.setAdapter(autoCompleteAdapter)
+
     }
 
 
@@ -194,18 +197,24 @@ class AllMoviesFragment : Fragment() {
 
                 delay(3000)
                 swipeLayout.isRefreshing = false
+
                 recyclerView?.visibility  = View.VISIBLE
+
 
 
             }
         }
+
     }
+
+
     private fun observeAndSetData() {
 
         CoroutineScope(Main).launch {
             val res = movieViewModel.getAllMovies(context!!)
             res.observeForever {
 //                Log.i("allFragment", "${it.get(0).title}")
+                observable.value = it
                 setDataIntoAdapter(it)
                 recyclerView?.layoutManager =
                     StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)

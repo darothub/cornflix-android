@@ -16,4 +16,8 @@ interface ServiceCall {
         var go =MutableLiveData<List<MovieEntity>>()
         return go
     }
+
+    suspend fun getMovieList(context: Context):List<MovieEntity>{
+        return listOf(MovieEntity(null, null, null, null, null))
+    }
 }
