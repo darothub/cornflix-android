@@ -44,7 +44,7 @@ class MovieViewModel(private val moviesRepoInterface: MoviesRepoInterface): View
     }
 
 
-    suspend fun getAllFavMovies(context: Context): LiveData<List<FavouriteMoviesEntity>>? {
+    suspend fun getAllFavMovies(context: Context): LiveData<List<MovieEntity>>? {
         val result = moviesRepoInterface.getFavMovies(context)
         Result.Success(result)
         return result

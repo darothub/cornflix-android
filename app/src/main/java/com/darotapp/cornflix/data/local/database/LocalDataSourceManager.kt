@@ -16,8 +16,8 @@ class LocalDataSourceManager(internal val movieDao: MovieDao?, internal var favo
         return result
     }
 
-    override suspend fun getFavouriteMovies(context: Context): LiveData<List<FavouriteMoviesEntity>>? {
-        val result = ServiceLocator.createLocalDataSource(context).favouriteDao?.allFav
+    override suspend fun getFavouriteMovies(context: Context): LiveData<List<MovieEntity>>? {
+        val result = ServiceLocator.createLocalDataSource(context).movieDao?.getFavourite(true)
         Success(result)
         return result
     }

@@ -26,4 +26,11 @@ interface MovieDao {
 
     @Query("SELECT * FROM movieentity")
     fun observeMovies(): LiveData<List<MovieEntity>>
+
+    @Query(
+        "SELECT * FROM movieentity WHERE favourite = :favourite"
+    )
+    fun getFavourite(favourite:Boolean):LiveData<List<MovieEntity>>
+
+
 }

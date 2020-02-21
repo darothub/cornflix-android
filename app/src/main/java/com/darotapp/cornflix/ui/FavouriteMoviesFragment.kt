@@ -19,6 +19,7 @@ import com.darotapp.cornflix.MovieApplication
 import com.darotapp.cornflix.R
 import com.darotapp.cornflix.ServiceLocator
 import com.darotapp.cornflix.adapters.FavouriteMoviesAdapter
+import com.darotapp.cornflix.adapters.MovieAdapter
 import com.darotapp.cornflix.data.viewmodel.MovieViewModel
 import com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.data.local.database.MovieDatabase
@@ -38,7 +39,7 @@ import kotlinx.coroutines.launch
  */
 class FavouriteMoviesFragment : Fragment() {
 
-    var favMovieAdapter: FavouriteMoviesAdapter? = null
+    var favMovieAdapter: MovieAdapter<MovieEntity>? = null
     private var recyclerView: RecyclerView? = null
     private val movieViewModel by viewModels<MovieViewModel> {
         MovieViewModelfactory((requireContext().applicationContext as MovieApplication).moviesRepoInterface)
@@ -62,9 +63,6 @@ class FavouriteMoviesFragment : Fragment() {
 
         recyclerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_fav)
 
-
-
-//        observeAndSetData()
 
         requireActivity().onBackPressedDispatcher.addCallback(this, object :OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
@@ -108,7 +106,7 @@ class FavouriteMoviesFragment : Fragment() {
 
     }
 
-    private fun setRecyclerViewLayoutManager(list: List<FavouriteMoviesEntity?>?) {
+    private fun setRecyclerViewLayoutManager(list: List<MovieEntity?>?) {
         recyclerView?.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         recyclerView?.setHasFixedSize(true)
@@ -118,21 +116,17 @@ class FavouriteMoviesFragment : Fragment() {
 //        favMovieAdapter?.setMovie(list)
     }
 
-    private fun setDataIntoAdapter(list: List<FavouriteMoviesEntity?>?) {
+    private fun setDataIntoAdapter(list: List<MovieEntity?>?) {
         favMovieAdapter =
-            FavouriteMoviesAdapter(list, object : FavouriteMoviesAdapter.OnMovieListener {
-                override fun onMovieClick(movieEntity: FavouriteMoviesEntity, view: View) {
+            MovieAdapter(list, object : MovieAdapter.OnMovieListener {
+                override fun onMovieDoubleClick(movieEntity: MovieEntity, view: View) {
 
                     val fav = view.findViewById<ImageView>(R.id.redFav)
                     fav.visibility = View.GONE
-
-
-                    val updatedMovie = convertToMovieEntity(movieEntity)
-
-
+                    movieEntity.favourite = false
 
                     CoroutineScope(Dispatchers.Main).launch {
-                        actAndUpdateChanges(movieEntity, updatedMovie)
+                        actAndUpdateChanges(movieEntity)
                     }
 //                    findNavController().navigate(R.id.favouriteMoviesFragment)
 
@@ -148,47 +142,28 @@ class FavouriteMoviesFragment : Fragment() {
 
                 }
 
-                override fun onSingleClick(movieEntity: FavouriteMoviesEntity, view: View) {
-
+                override fun onSingleClick(movieEntity: MovieEntity, view: View) {
                     navigateToDetails(movieEntity, view)
-
                 }
+
 
             })
     }
 
-    private fun navigateToDetails(movieEntity: FavouriteMoviesEntity, view: View) {
+    private fun navigateToDetails(movieEntity: MovieEntity, view: View) {
         val action =
             FavouriteMoviesFragmentDirections.actionFavouriteMoviesFragmentToMovieDetailsFragment()
-        action.favMovie = movieEntity
+        action.movie = movieEntity
         recyclerView?.let {
             Navigation.findNavController(it).navigate(action)
         }
     }
 
-    suspend fun actAndUpdateChanges(movieEntity: FavouriteMoviesEntity, updatedMovie: MovieEntity) {
-        ServiceLocator.createLocalDataSource(context!!).favouriteDao?.delete(movieEntity)
+    suspend fun actAndUpdateChanges(updatedMovie: MovieEntity) {
         ServiceLocator.createLocalDataSource(context!!).movieDao?.update(updatedMovie)
-//        MovieDatabase.getInstance(context!!)?.movieDao()?.update(updatedMovie)
-//        MovieDatabase.getInstance(context!!)?.favouriteDao()?.delete(movieEntity)
         favMovieAdapter?.notifyDataSetChanged()
     }
 
-    fun convertToMovieEntity(movieEntity: FavouriteMoviesEntity):MovieEntity{
-        movieEntity.favourite = false
-        val (title, movieImage, rating, overView, releaseDate) = movieEntity
 
-        val updatedMovie = MovieEntity(
-            title,
-            movieImage,
-            rating,
-            overView,
-            releaseDate
-        )
-        updatedMovie.favourite = movieEntity.favourite
-        updatedMovie.movieId = movieEntity.movieId
-        updatedMovie.id = movieEntity.id
-        return updatedMovie
-    }
 
 }

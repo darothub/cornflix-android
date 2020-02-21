@@ -116,9 +116,10 @@ class AllMoviesFragment : Fragment() {
             override fun onMovieDoubleClick(movieEntity: MovieEntity, view: View) {
 
                 val fav = view.findViewById<ImageView>(R.id.redFav)
-                var favMovie = convertToFavourityEntity(movieEntity)
+//                var favMovie = convertToFavourityEntity(movieEntity)
 
 
+                movieEntity.favourite = true
                 if (fav.visibility == View.GONE) {
                     fav.visibility = View.VISIBLE
 
@@ -126,10 +127,10 @@ class AllMoviesFragment : Fragment() {
                     CoroutineScope(Main).launch {
 
                         try {
-                            insertAndUpdate(favMovie, movieEntity)
+                            insertAndUpdate(movieEntity)
                             FancyToast.makeText(
                                 context,
-                                "${favMovie.title} is added to favourite",
+                                "${movieEntity.title} is added to favourite",
                                 FancyToast.LENGTH_LONG,
                                 FancyToast.SUCCESS,
                                 true
@@ -157,10 +158,10 @@ class AllMoviesFragment : Fragment() {
 
                         try {
 
-                            deleteAndUpdate(favMovie, movieEntity)
+                            deleteAndUpdate(movieEntity)
                             FancyToast.makeText(
                                 context,
-                                "${favMovie.title} is removed from favourite",
+                                "${movieEntity.title} is removed from favourite",
                                 FancyToast.LENGTH_LONG,
                                 FancyToast.INFO,
                                 true
@@ -204,10 +205,7 @@ class AllMoviesFragment : Fragment() {
         }
     }
 
-    private suspend fun insertAndUpdate(favMovie: FavouriteMoviesEntity, movieEntity: MovieEntity) {
-//        MovieDatabase.getInstance(context!!)?.movieDao()?.update(movieEntity)
-//        MovieDatabase.getInstance(context!!)?.favouriteDao()?.insert(favMovie)
-        ServiceLocator.createLocalDataSource(context!!).favouriteDao?.insert(favMovie)
+    private suspend fun insertAndUpdate(movieEntity: MovieEntity) {
         ServiceLocator.createLocalDataSource(context!!).movieDao?.update(movieEntity)
 
     }
@@ -225,7 +223,7 @@ class AllMoviesFragment : Fragment() {
             releaseDate
         )
         favMovie.movieId = movieEntity.movieId
-        favMovie.id = movieEntity.movieId?.toInt() ?: movieEntity.id!!
+        favMovie.id = movieEntity.movieId?.toInt() ?: movieEntity.id
         favMovie.favourite = movieEntity.favourite
         return favMovie
     }
@@ -261,12 +259,9 @@ class AllMoviesFragment : Fragment() {
     }
 
     //
-    private suspend fun deleteAndUpdate(favMovie: FavouriteMoviesEntity, movieEntity: MovieEntity) {
-//
-        ServiceLocator.createLocalDataSource(context!!).favouriteDao?.delete(favMovie)
+    private suspend fun deleteAndUpdate(movieEntity: MovieEntity) {
         ServiceLocator.createLocalDataSource(context!!).movieDao?.update(movieEntity)
-//        MovieDatabase.getInstance(context!!)?.movieDao()?.update(movieEntity)
-//        MovieDatabase.getInstance(context!!)?.favouriteDao()?.delete(favMovie)
+
 
     }
 }

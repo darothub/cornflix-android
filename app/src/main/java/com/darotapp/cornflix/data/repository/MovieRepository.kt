@@ -42,7 +42,7 @@ class MovieRepository(
         return responseList
     }
 
-    override suspend fun getFavMovies(context: Context): LiveData<List<FavouriteMoviesEntity>>? {
+    override suspend fun getFavMovies(context: Context): LiveData<List<MovieEntity>>? {
         val result = localDataSourceManager.getFavouriteMovies(context)
         Result.Success(result)
         return result

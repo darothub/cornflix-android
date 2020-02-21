@@ -9,7 +9,7 @@ import com.darotapp.cornflix.data.local.database.MovieEntity
 interface MoviesRepoInterface {
     suspend fun getMovies(fetch: Boolean = false, context: Context, page:Int?=null):LiveData<List<MovieEntity>>
 
-    suspend fun getFavMovies(context: Context): LiveData<List<FavouriteMoviesEntity>>?
+    suspend fun getFavMovies(context: Context): LiveData<List<MovieEntity>>?
 
 //    fun observeMovies(context: Context): LiveData<Result<List<MovieEntity>>>
 
