@@ -41,7 +41,6 @@ object ServiceLocator {
 //        return LocalDataSourceManager(null, database.favouriteDao())
 //    }
 
-
     private fun createDataBase(context: Context): MovieDatabase {
         val result = Room.databaseBuilder(
             context.applicationContext,

@@ -29,26 +29,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <TextView
+                    android:id="@+id/topRatedText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/top_rated"
                     android:layout_centerVertical="true"
+                    android:visibility="visible"
                     android:textColor="@color/colorAccent"
                     android:textSize="18sp"/>
-"
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/favouriteCard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:lottie_rawRes="@raw/bouncinglove"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="-15dp"
+                <AutoCompleteTextView
+                    android:id="@+id/searchEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:layout_marginEnd="15dp"
+                    android:dropDownSelector="@drawable/ic_search_"
+                    android:completionThreshold="1"
+                    android:completionHint="Press Enter"
+                    android:drawableEnd="@drawable/ic_search_"
+                    />
+
+                <Button
+                    android:id="@+id/searchBtn"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="10dp"
+                    android:background="?android:attr/selectableItemBackground"/>
 
-                    app:lottie_loop="true"
 
-                    app:lottie_autoPlay="true" />
+
 
             </RelativeLayout>
 
@@ -74,18 +85,20 @@
 <!--        app:cardBackgroundColor="@color/colorAccent"-->
 <!--        app:cardCornerRadius="30dp">-->
 
-<!--        <com.airbnb.lottie.LottieAnimationView-->
-<!--            android:id="@+id/favoriteIcon3"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:lottie_rawRes="@raw/bouncinglove"-->
-<!--            android:layout_centerHorizontal="true"-->
-<!--            android:layout_below="@id/cornflixText"-->
-<!--            android:layout_marginTop="10dp"-->
-<!--            app:lottie_loop="true"-->
 
-<!--            app:lottie_autoPlay="true" />-->
 <!--    </androidx.cardview.widget.CardView>-->
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/favouriteCard"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                app:lottie_rawRes="@raw/bouncinglove"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/cornflixText"
+                android:layout_gravity="bottom|end"
+                app:lottie_loop="true"
+
+                app:lottie_autoPlay="true" />
 
 
 

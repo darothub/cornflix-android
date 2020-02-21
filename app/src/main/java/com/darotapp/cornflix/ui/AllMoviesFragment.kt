@@ -7,8 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -44,6 +46,10 @@ class AllMoviesFragment : Fragment() {
     //    var movieViewModel: MovieViewModel?=null
     var movieAdapter: MovieAdapter<MovieEntity>? = null
     var recyclerView: RecyclerView? = null
+    var movies:List<MovieEntity>?=null
+    var movieTitleList:List<String?>? = null
+    var movieEntityList:ArrayList<MovieEntity> = ArrayList()
+    lateinit var textOnScreen:String
     private val movieViewModel by viewModels<MovieViewModel> {
         MovieViewModelfactory((requireContext().applicationContext as MovieApplication).moviesRepoInterface)
     }
@@ -80,7 +86,61 @@ class AllMoviesFragment : Fragment() {
         swipeItemTouchHelper()
         navigateToFavourite()
 
+         textOnScreen = searchEditText.text.toString()
+        searchEditText.setOnFocusChangeListener { v, hasFocus ->
+            if(hasFocus){
+                topRatedText.visibility = View.GONE
+            }
+            else{
+                topRatedText.visibility = View.VISIBLE
+            }
+        }
+        CoroutineScope(Main).launch {
+            movies = ServiceLocator.createLocalDataSource(context!!).movieDao?.getMovies()
+            movieTitleList = movies?.map {
+                it.title
+            }
+            Log.i("size", "${movies?.size}")
+            var autoCompleteAdapter = movieTitleList?.toList()?.let {
+                ArrayAdapter(context!!, android.R.layout.simple_list_item_1,
+                    it
+                )
+            }
+            searchEditText.setAdapter(autoCompleteAdapter)
+            searchBtn.setOnClickListener {
+                val text = searchEditText.text.toString()
+                if(text.isNotEmpty()){
 
+                    val selectedMovie = movies?.find {
+                        text == it.title
+                    }
+
+                    if (selectedMovie != null) {
+                        searchEditText.text.clear()
+                        gotoDetails(selectedMovie)
+
+
+                    }
+                }
+                else{
+                    return@setOnClickListener
+                }
+            }
+
+
+
+
+        }
+
+        Log.i("onacti", "text $textOnScreen")
+
+
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.i("start", "text $textOnScreen")
     }
 
     private fun loadData(context: Context, page:Int){
@@ -264,6 +324,8 @@ class AllMoviesFragment : Fragment() {
 
 
     }
+
+
 }
 
 
