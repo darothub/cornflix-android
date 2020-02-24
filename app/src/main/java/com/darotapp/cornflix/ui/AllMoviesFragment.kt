@@ -1,6 +1,8 @@
 package com.darotapp.cornflix.ui
 
 
+import android.app.AlertDialog
+import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -94,6 +96,7 @@ class AllMoviesFragment : Fragment() {
         swipeItemTouchHelper()
         //function to navigate to favourite fragment
         navigateToFavourite()
+        onMenuClick()
 
         // function to search
         searchFun()
@@ -390,6 +393,36 @@ class AllMoviesFragment : Fragment() {
 
     }
 
+
+    private fun onMenuClick(){
+        allMoviesToolbar.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.deleteAll ->{
+                    AlertDialog.Builder(context).apply {
+                        setTitle("Are you sure?")
+                        setMessage("You cannot undo this operation")
+                        setPositiveButton("Yes"){_, _ ->
+                            CoroutineScope(IO).launch {
+                                ServiceLocator.createLocalDataSource(context!!).movieDao?.deleteAllMovies()
+                            }
+                            Toast.makeText(context, "All movies deleted", Toast.LENGTH_SHORT).show()
+                        }
+                        setNegativeButton("No"){_, _ ->
+                            findNavController().navigate(R.id.allMoviesFragment)
+
+                        }
+
+
+                    }.create().show()
+
+
+                    true
+                }
+                else -> false
+            }
+
+        }
+    }
 
 }
 
