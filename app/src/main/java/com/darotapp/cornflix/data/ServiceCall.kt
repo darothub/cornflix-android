@@ -20,4 +20,6 @@ interface ServiceCall {
     suspend fun getMovieList(context: Context):List<MovieEntity>{
         return listOf(MovieEntity(null, null, null, null, null))
     }
+
+
 }

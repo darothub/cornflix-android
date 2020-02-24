@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.graphics.toColorInt
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -34,6 +35,7 @@ import com.darotapp.cornflix.data.viewmodel.MovieViewModelfactory
 import com.google.android.material.snackbar.Snackbar
 import com.shashank.sony.fancytoastlib.FancyToast
 import kotlinx.android.synthetic.main.fragment_all_movies.*
+import kotlinx.android.synthetic.main.movie_recycler_items.view.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -109,6 +111,8 @@ class AllMoviesFragment : Fragment() {
 
 
 
+
+
     }
 
     private fun searchFun() {
@@ -134,7 +138,11 @@ class AllMoviesFragment : Fragment() {
 
 
                 //Autocompelete TextView adapter
-                setAutocompleteTextAdapter(movieTitleList as List<String>)
+                context?.let { it1 ->
+                    setAutocompleteTextAdapter(movieTitleList as List<String>,
+                        it1
+                    )
+                }
                 searchBtnBehaviourOnclick(movies as List<MovieEntity>)
 
 
@@ -173,8 +181,8 @@ class AllMoviesFragment : Fragment() {
         }
     }
 
-    private fun setAutocompleteTextAdapter(moviesTitleList:List<String>) {
-        var autoCompleteAdapter = ArrayAdapter(context!!, android.R.layout.simple_list_item_1,
+    private fun setAutocompleteTextAdapter(moviesTitleList:List<String>, context: Context) {
+        var autoCompleteAdapter = ArrayAdapter(context, android.R.layout.simple_list_item_1,
             moviesTitleList.toList()
         )
         searchEditText.setAdapter(autoCompleteAdapter)
@@ -194,7 +202,7 @@ class AllMoviesFragment : Fragment() {
     private fun loadMoreMovies(){
 
         swipeLayout.setOnRefreshListener {
-            var pageNum =  Random.nextInt(1, 100)
+            var pageNum =  Random.nextInt(1, 10)
             CoroutineScope(Main).launch {
                 recyclerView?.visibility  = View.GONE
                 withContext(IO){
@@ -316,6 +324,10 @@ class AllMoviesFragment : Fragment() {
 
                 gotoDetails(movieEntity)
 
+//                view.deleteIcon.setOnClickListener {
+//                    singleDeletion(movieEntity)
+//                }
+
             }
 
         })
@@ -379,7 +391,7 @@ class AllMoviesFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val movie = movieAdapter?.getMovieAt(viewHolder.adapterPosition)
-                gotoDetails(movie!!)
+                singleDeletion(movie)
 
             }
 
@@ -405,11 +417,11 @@ class AllMoviesFragment : Fragment() {
 
                         AlertDialog.Builder(context).apply {
                             setTitle("Are you sure?")
-                            setMessage("You cannot undo this operation")
+                            setMessage("You can not undo this operation")
                             setPositiveButton("Yes"){_, _ ->
 
                                 CoroutineScope(IO).launch {
-                                    ServiceLocator.createLocalDataSource(context!!).movieDao?.deleteAllMovies()
+                                    ServiceLocator.createLocalDataSource(context!!).movieDao?.deleteAllMovies(true)
                                 }
                                 Toast.makeText(context, "All movies deleted", Toast.LENGTH_SHORT).show()
                             }
@@ -430,6 +442,31 @@ class AllMoviesFragment : Fragment() {
             }
 
         }
+    }
+
+    private fun singleDeletion(movieEntity: MovieEntity?){
+
+        AlertDialog.Builder(context).apply {
+            setTitle("Are you sure?")
+            setMessage("This may also affect your favourite list")
+            setPositiveButton("Yes"){_, _ ->
+
+                CoroutineScope(IO).launch {
+                    movieEntity?.let {
+                        ServiceLocator.createLocalDataSource(context).movieDao?.delete(
+                            it
+                        )
+                    }
+                }
+                Toast.makeText(context, "${movieEntity?.title} deleted", Toast.LENGTH_SHORT).show()
+            }
+            setNegativeButton("No"){_, _ ->
+                findNavController().navigate(R.id.allMoviesFragment)
+
+            }
+
+
+        }.create().show()
     }
 
 }
