@@ -20,7 +20,7 @@ interface MovieDao {
 
 
     @get:Query(
-        "SELECT * FROM movieentity"
+        "SELECT * FROM movieentity ORDER by title"
     )
     val allMovies: LiveData<List<MovieEntity>>
 
