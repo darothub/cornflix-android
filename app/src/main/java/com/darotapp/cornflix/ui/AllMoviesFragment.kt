@@ -1,15 +1,15 @@
 package com.darotapp.cornflix.ui
 
 
+import android.app.AlertDialog
+import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -49,6 +49,8 @@ class AllMoviesFragment : Fragment() {
     var movies:List<MovieEntity>?=null
     var movieTitleList:List<String?>? = null
     var observable:MutableLiveData<List<MovieEntity>> = MutableLiveData<List<MovieEntity>>()
+    lateinit var searchEditText: AutoCompleteTextView
+    lateinit var searchBtn:Button
 
 
     //View model factory to inject or instantiate movieViewModel
@@ -80,6 +82,10 @@ class AllMoviesFragment : Fragment() {
         //Getting recyclerview
         recyclerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_movies)
 
+
+        searchEditText = view!!.findViewById(R.id.searchEditText)
+        searchBtn = view!!.findViewById(R.id.searchBtn)
+
         //Function to load data
         loadData(context!!, 1)
 
@@ -90,6 +96,7 @@ class AllMoviesFragment : Fragment() {
         swipeItemTouchHelper()
         //function to navigate to favourite fragment
         navigateToFavourite()
+        onMenuClick()
 
         // function to search
         searchFun()
@@ -98,6 +105,7 @@ class AllMoviesFragment : Fragment() {
 
 
         loadMoreMovies()
+
 
 
 
@@ -385,6 +393,44 @@ class AllMoviesFragment : Fragment() {
 
     }
 
+
+    private fun onMenuClick(){
+        allMoviesToolbar.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.deleteAll ->{
+                    if(movieTitleList.isNullOrEmpty()){
+                        Toast.makeText(context, "No movie to delete", Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+
+                        AlertDialog.Builder(context).apply {
+                            setTitle("Are you sure?")
+                            setMessage("You cannot undo this operation")
+                            setPositiveButton("Yes"){_, _ ->
+
+                                CoroutineScope(IO).launch {
+                                    ServiceLocator.createLocalDataSource(context!!).movieDao?.deleteAllMovies()
+                                }
+                                Toast.makeText(context, "All movies deleted", Toast.LENGTH_SHORT).show()
+                            }
+                            setNegativeButton("No"){_, _ ->
+                                findNavController().navigate(R.id.allMoviesFragment)
+
+                            }
+
+
+                        }.create().show()
+                    }
+
+
+
+                    true
+                }
+                else -> false
+            }
+
+        }
+    }
 
 }
 

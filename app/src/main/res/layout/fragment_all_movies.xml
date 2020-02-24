@@ -23,6 +23,7 @@
             android:elevation="10dp"
             app:layout_collapseMode="pin"
             app:title="Top rated"
+            app:menu="@menu/all_movies_menu"
             app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium"
             app:titleTextColor="@color/colorAccent">
 

@@ -20,9 +20,13 @@ interface MovieDao {
 
 
     @get:Query(
-        "SELECT * FROM movieentity"
+        "SELECT * FROM movieentity ORDER by title"
     )
     val allMovies: LiveData<List<MovieEntity>>
+
+    @Query("DELETE FROM movieentity")
+    suspend fun deleteAllMovies()
+
 
     @Query("SELECT * FROM movieentity")
     fun observeMovies(): LiveData<List<MovieEntity>>
