@@ -398,22 +398,30 @@ class AllMoviesFragment : Fragment() {
         allMoviesToolbar.setOnMenuItemClickListener {
             when(it.itemId){
                 R.id.deleteAll ->{
-                    AlertDialog.Builder(context).apply {
-                        setTitle("Are you sure?")
-                        setMessage("You cannot undo this operation")
-                        setPositiveButton("Yes"){_, _ ->
-                            CoroutineScope(IO).launch {
-                                ServiceLocator.createLocalDataSource(context!!).movieDao?.deleteAllMovies()
+                    if(movieTitleList.isNullOrEmpty()){
+                        Toast.makeText(context, "No movie to delete", Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+
+                        AlertDialog.Builder(context).apply {
+                            setTitle("Are you sure?")
+                            setMessage("You cannot undo this operation")
+                            setPositiveButton("Yes"){_, _ ->
+
+                                CoroutineScope(IO).launch {
+                                    ServiceLocator.createLocalDataSource(context!!).movieDao?.deleteAllMovies()
+                                }
+                                Toast.makeText(context, "All movies deleted", Toast.LENGTH_SHORT).show()
                             }
-                            Toast.makeText(context, "All movies deleted", Toast.LENGTH_SHORT).show()
-                        }
-                        setNegativeButton("No"){_, _ ->
-                            findNavController().navigate(R.id.allMoviesFragment)
+                            setNegativeButton("No"){_, _ ->
+                                findNavController().navigate(R.id.allMoviesFragment)
 
-                        }
+                            }
 
 
-                    }.create().show()
+                        }.create().show()
+                    }
+
 
 
                     true
