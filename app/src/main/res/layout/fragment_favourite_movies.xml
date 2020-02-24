@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/colorAccent"
     tools:context=".ui.FavouriteMoviesFragment">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -25,7 +25,7 @@
                 android:elevation="10dp"
                 app:title="Favourites"
                 app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium"
-                app:titleTextColor="@color/colorAccent"
+                app:titleTextColor="@color/colorPrimaryDark"
                 app:layout_collapseMode="pin">
 
 

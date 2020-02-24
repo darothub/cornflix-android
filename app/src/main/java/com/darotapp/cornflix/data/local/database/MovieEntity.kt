@@ -25,6 +25,7 @@ class MovieEntity(
     var id: Int = 0
     var favourite:Boolean = false
     var movieId:String? = ""
+    var isDeleted:Boolean = false
 
 
 }

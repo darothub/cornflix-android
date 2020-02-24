@@ -20,10 +20,14 @@
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:fontFamily">@font/montserrat_alternates</item>
+        <item name="alertDialogStyle">@style/AlertTheme</item>
 
     </style>
 
 
+    <style name="AlertTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:textColorAlertDialogListItem">@color/colorPrimaryDark</item>
+    </style>
     <style name="AppThemeTwo.NoActionBar" parent="AppTheme.NoActionBar">
 
         <item name="android:windowTranslucentStatus">false</item>

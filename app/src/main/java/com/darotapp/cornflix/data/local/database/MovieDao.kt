@@ -24,8 +24,8 @@ interface MovieDao {
     )
     val allMovies: LiveData<List<MovieEntity>>
 
-    @Query("DELETE FROM movieentity")
-    suspend fun deleteAllMovies()
+    @Query("DELETE FROM movieentity WHERE favourite !=:favourite")
+    suspend fun deleteAllMovies(favourite: Boolean)
 
 
     @Query("SELECT * FROM movieentity")
