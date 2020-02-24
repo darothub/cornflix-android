@@ -7,9 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -49,6 +47,8 @@ class AllMoviesFragment : Fragment() {
     var movies:List<MovieEntity>?=null
     var movieTitleList:List<String?>? = null
     var observable:MutableLiveData<List<MovieEntity>> = MutableLiveData<List<MovieEntity>>()
+    lateinit var searchEditText: AutoCompleteTextView
+    lateinit var searchBtn:Button
 
 
     //View model factory to inject or instantiate movieViewModel
@@ -80,6 +80,10 @@ class AllMoviesFragment : Fragment() {
         //Getting recyclerview
         recyclerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_movies)
 
+
+        searchEditText = view!!.findViewById(R.id.searchEditText)
+        searchBtn = view!!.findViewById(R.id.searchBtn)
+
         //Function to load data
         loadData(context!!, 1)
 
@@ -98,6 +102,7 @@ class AllMoviesFragment : Fragment() {
 
 
         loadMoreMovies()
+
 
 
 
