@@ -16,11 +16,11 @@ interface MovieDao {
     suspend fun delete(movieEntity: MovieEntity)
 
     @Query("SELECT * FROM movieentity")
-    suspend fun getMovies(): List<MovieEntity>
+    suspend fun getMoviesList(): List<MovieEntity>
 
 
     @get:Query(
-        "SELECT * FROM movieentity"
+        "SELECT * FROM movieentity ORDER by title"
     )
     val allMovies: LiveData<List<MovieEntity>>
 
@@ -30,4 +30,11 @@ interface MovieDao {
 
     @Query("SELECT * FROM movieentity")
     fun observeMovies(): LiveData<List<MovieEntity>>
+
+    @Query(
+        "SELECT * FROM movieentity WHERE favourite = :favourite"
+    )
+    fun getFavourite(favourite:Boolean):LiveData<List<MovieEntity>>
+
+
 }

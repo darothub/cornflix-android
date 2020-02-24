@@ -9,10 +9,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -33,11 +34,10 @@ import com.darotapp.cornflix.data.viewmodel.MovieViewModelfactory
 import com.google.android.material.snackbar.Snackbar
 import com.shashank.sony.fancytoastlib.FancyToast
 import kotlinx.android.synthetic.main.fragment_all_movies.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 /**
  * A simple [Fragment] subclass.
@@ -46,6 +46,14 @@ class AllMoviesFragment : Fragment() {
     //    var movieViewModel: MovieViewModel?=null
     var movieAdapter: MovieAdapter<MovieEntity>? = null
     var recyclerView: RecyclerView? = null
+    var movies:List<MovieEntity>?=null
+    var movieTitleList:List<String?>? = null
+    var observable:MutableLiveData<List<MovieEntity>> = MutableLiveData<List<MovieEntity>>()
+    lateinit var searchEditText: AutoCompleteTextView
+    lateinit var searchBtn:Button
+
+
+    //View model factory to inject or instantiate movieViewModel
     private val movieViewModel by viewModels<MovieViewModel> {
         MovieViewModelfactory((requireContext().applicationContext as MovieApplication).moviesRepoInterface)
     }
@@ -54,10 +62,11 @@ class AllMoviesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+
+        observable = MutableLiveData()
+
         // Inflate the layout for this fragment
-
-        observeAndSetData()
-
         return inflater.inflate(R.layout.fragment_all_movies, container, false)
     }
 
@@ -70,27 +79,142 @@ class AllMoviesFragment : Fragment() {
         val nav = Navigation.findNavController(post_appbar)
         NavigationUI.setupWithNavController(allMoviesToolbar, nav)
 
-//        Toast.makeText(context, "onActivity created", Toast.LENGTH_SHORT).show()
+        //Getting recyclerview
         recyclerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_movies)
 
-//        val movieEntity = MovieEntity("Rising", "rising.jpg", 3, "Wloooo", "jan 2020")
 
+        searchEditText = view!!.findViewById(R.id.searchEditText)
+        searchBtn = view!!.findViewById(R.id.searchBtn)
 
+        //Function to load data
+        loadData(context!!, 1)
 
-        loadData(context!!, 2)
+        //Observe live data and set into adapter
+        observeAndSetData()
 
+        // function for recyclerView ItemTouchHelper
         swipeItemTouchHelper()
+        //function to navigate to favourite fragment
         navigateToFavourite()
         onMenuClick()
 
+        // function to search
+        searchFun()
+
+//        Log.i("onacti", "text $textOnScreen")
+
+
+        loadMoreMovies()
+
+
+
 
     }
 
+    private fun searchFun() {
+        searchEditText.setOnFocusChangeListener { v, hasFocus ->
+            if(hasFocus){
+                topRatedText.visibility = View.GONE
+            }
+            else{
+                topRatedText.visibility = View.VISIBLE
+            }
+        }
+        observable.observeForever {
+
+            CoroutineScope(Main).launch {
+
+                movies = it
+
+                Log.i("movieSize", "${movies?.size}")
+                // Extract title of movies
+                movieTitleList = movies?.map {
+                    it.title
+                }
+
+
+                //Autocompelete TextView adapter
+                setAutocompleteTextAdapter(movieTitleList as List<String>)
+                searchBtnBehaviourOnclick(movies as List<MovieEntity>)
+
+
+            }
+
+            //Get movies available
+
+        }
+
+    }
+
+    private suspend fun getLocalMovieList():List<MovieEntity> {
+        val localMovies = ServiceLocator.createLocalDataSource(context!!).movieDao?.getMoviesList()
+        Log.i("movieSize", "${localMovies?.size}")
+        return localMovies as List<MovieEntity>
+    }
+
+    private fun searchBtnBehaviourOnclick(movies:List<MovieEntity>) {
+        searchBtn.setOnClickListener {
+            val text = searchEditText.text.toString()
+            if(text.isNotEmpty()){
+
+                val selectedMovie = movies.find {
+                    text == it.title
+                }
+
+                if (selectedMovie != null) {
+                    searchEditText.text.clear()
+                    gotoDetails(selectedMovie)
+
+                }
+            }
+            else{
+                return@setOnClickListener
+            }
+        }
+    }
+
+    private fun setAutocompleteTextAdapter(moviesTitleList:List<String>) {
+        var autoCompleteAdapter = ArrayAdapter(context!!, android.R.layout.simple_list_item_1,
+            moviesTitleList.toList()
+        )
+        searchEditText.setAdapter(autoCompleteAdapter)
+
+    }
+
+
     private fun loadData(context: Context, page:Int){
+
+
         CoroutineScope(IO).launch {
             movieViewModel.loadMovies(context, page)
         }
+
     }
+
+    private fun loadMoreMovies(){
+
+        swipeLayout.setOnRefreshListener {
+            var pageNum =  Random.nextInt(1, 100)
+            CoroutineScope(Main).launch {
+                recyclerView?.visibility  = View.GONE
+                withContext(IO){
+                    movieViewModel.loadMovies(context!!, pageNum)
+                }
+
+                Log.i("page", "$pageNum")
+
+                delay(3000)
+                swipeLayout.isRefreshing = false
+
+                recyclerView?.visibility  = View.VISIBLE
+
+
+
+            }
+        }
+
+    }
+
 
     private fun observeAndSetData() {
 
@@ -98,6 +222,7 @@ class AllMoviesFragment : Fragment() {
             val res = movieViewModel.getAllMovies(context!!)
             res.observeForever {
 //                Log.i("allFragment", "${it.get(0).title}")
+                observable.value = it
                 setDataIntoAdapter(it)
                 recyclerView?.layoutManager =
                     StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
@@ -119,9 +244,10 @@ class AllMoviesFragment : Fragment() {
             override fun onMovieDoubleClick(movieEntity: MovieEntity, view: View) {
 
                 val fav = view.findViewById<ImageView>(R.id.redFav)
-                var favMovie = convertToFavourityEntity(movieEntity)
+//                var favMovie = convertToFavourityEntity(movieEntity)
 
 
+                movieEntity.favourite = true
                 if (fav.visibility == View.GONE) {
                     fav.visibility = View.VISIBLE
 
@@ -129,10 +255,10 @@ class AllMoviesFragment : Fragment() {
                     CoroutineScope(Main).launch {
 
                         try {
-                            insertAndUpdate(favMovie, movieEntity)
+                            insertAndUpdate(movieEntity)
                             FancyToast.makeText(
                                 context,
-                                "${favMovie.title} is added to favourite",
+                                "${movieEntity.title} is added to favourite",
                                 FancyToast.LENGTH_LONG,
                                 FancyToast.SUCCESS,
                                 true
@@ -160,10 +286,10 @@ class AllMoviesFragment : Fragment() {
 
                         try {
 
-                            deleteAndUpdate(favMovie, movieEntity)
+                            deleteAndUpdate(movieEntity)
                             FancyToast.makeText(
                                 context,
-                                "${favMovie.title} is removed from favourite",
+                                "${movieEntity.title} is removed from favourite",
                                 FancyToast.LENGTH_LONG,
                                 FancyToast.INFO,
                                 true
@@ -207,10 +333,7 @@ class AllMoviesFragment : Fragment() {
         }
     }
 
-    private suspend fun insertAndUpdate(favMovie: FavouriteMoviesEntity, movieEntity: MovieEntity) {
-//        MovieDatabase.getInstance(context!!)?.movieDao()?.update(movieEntity)
-//        MovieDatabase.getInstance(context!!)?.favouriteDao()?.insert(favMovie)
-        ServiceLocator.createLocalDataSource(context!!).favouriteDao?.insert(favMovie)
+    private suspend fun insertAndUpdate(movieEntity: MovieEntity) {
         ServiceLocator.createLocalDataSource(context!!).movieDao?.update(movieEntity)
 
     }
@@ -228,7 +351,7 @@ class AllMoviesFragment : Fragment() {
             releaseDate
         )
         favMovie.movieId = movieEntity.movieId
-        favMovie.id = movieEntity.movieId?.toInt() ?: movieEntity.id!!
+        favMovie.id = movieEntity.movieId?.toInt() ?: movieEntity.id
         favMovie.favourite = movieEntity.favourite
         return favMovie
     }
@@ -264,14 +387,12 @@ class AllMoviesFragment : Fragment() {
     }
 
     //
-    private suspend fun deleteAndUpdate(favMovie: FavouriteMoviesEntity, movieEntity: MovieEntity) {
-//
-        ServiceLocator.createLocalDataSource(context!!).favouriteDao?.delete(favMovie)
+    private suspend fun deleteAndUpdate(movieEntity: MovieEntity) {
         ServiceLocator.createLocalDataSource(context!!).movieDao?.update(movieEntity)
-//        MovieDatabase.getInstance(context!!)?.movieDao()?.update(movieEntity)
-//        MovieDatabase.getInstance(context!!)?.favouriteDao()?.delete(favMovie)
+
 
     }
+
 
     private fun onMenuClick(){
         allMoviesToolbar.setOnMenuItemClickListener {
@@ -302,6 +423,7 @@ class AllMoviesFragment : Fragment() {
 
         }
     }
+
 }
 
 
