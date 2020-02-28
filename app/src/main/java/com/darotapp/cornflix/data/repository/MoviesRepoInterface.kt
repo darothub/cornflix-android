@@ -11,7 +11,7 @@ interface MoviesRepoInterface {
 
     suspend fun getFavMovies(context: Context): LiveData<List<MovieEntity>>?
 
-    suspend fun getMoviesList(context: Context):List<MovieEntity>{
+    fun getMoviesList(context: Context):List<MovieEntity>{
         return listOf(MovieEntity(null, null, null, null, null))
     }
 

@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.darotapp.cornflix.MovieApplication
@@ -23,6 +24,7 @@ import com.darotapp.cornflix.data.local.database.MovieEntity
 import com.darotapp.cornflix.data.viewmodel.MovieViewModelfactory
 import com.google.android.material.snackbar.Snackbar
 import com.shashank.sony.fancytoastlib.FancyToast
+import kotlinx.android.synthetic.main.fragment_all_movies.*
 import kotlinx.android.synthetic.main.fragment_favourite_movies.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +51,7 @@ class FavouriteMoviesFragment : Fragment() {
 
         observeAndSetData()
 
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_favourite_movies, container, false)
     }
@@ -61,13 +64,14 @@ class FavouriteMoviesFragment : Fragment() {
         NavigationUI.setupWithNavController(favToolbar, nav)
 
         //Getting recyclerView
-        recyclerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_fav)
+        recyclerView = requireView().findViewById<RecyclerView>(R.id.recycler_view_fav)
 
 
+        swipeItemTouchHelper()
         //On back press
-        requireActivity().onBackPressedDispatcher.addCallback(this, object :OnBackPressedCallback(true){
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object :OnBackPressedCallback(true){
             override fun handleOnBackPressed() {
-                findNavController().navigate(R.id.landingFragment)
+                findNavController().popBackStack()
             }
 
         })
@@ -80,7 +84,7 @@ class FavouriteMoviesFragment : Fragment() {
 
         try {
             CoroutineScope(Main).launch {
-                movieViewModel.getAllFavMovies(context!!)?.observeForever { list ->
+                movieViewModel.getAllFavMovies(requireContext())?.observeForever { list ->
 
                     if (list.isNullOrEmpty()) {
 
@@ -157,10 +161,30 @@ class FavouriteMoviesFragment : Fragment() {
 
     suspend fun updateChangesAndReact(updatedMovie: MovieEntity) {
 
-        ServiceLocator.createLocalDataSource(context!!).movieDao?.update(updatedMovie)
+        ServiceLocator.createLocalDataSource(requireContext()).movieDao?.update(updatedMovie)
         favMovieAdapter?.notifyDataSetChanged()
     }
 
+    private fun swipeItemTouchHelper() {
+        ItemTouchHelper(object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP or ItemTouchHelper.LEFT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val movie = favMovieAdapter?.getMovieAt(viewHolder.adapterPosition)
+
+                recyclerView?.scrollToPosition(viewHolder.adapterPosition)
+
+            }
+
+        }).attachToRecyclerView(recycler_view_fav)
+    }
 
 
 }

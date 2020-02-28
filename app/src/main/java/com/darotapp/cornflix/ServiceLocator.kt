@@ -47,6 +47,7 @@ object ServiceLocator {
             MovieDatabase::class.java, "MovieDb"
         )
             .fallbackToDestructiveMigration()
+            .allowMainThreadQueries()
             .build()
         database = result
         return result

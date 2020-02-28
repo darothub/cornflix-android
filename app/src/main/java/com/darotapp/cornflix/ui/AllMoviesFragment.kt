@@ -4,6 +4,7 @@ package com.darotapp.cornflix.ui
 import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import androidx.core.graphics.toColorInt
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -53,6 +55,8 @@ class AllMoviesFragment : Fragment() {
     var observable:MutableLiveData<List<MovieEntity>> = MutableLiveData<List<MovieEntity>>()
     lateinit var searchEditText: AutoCompleteTextView
     lateinit var searchBtn:Button
+    lateinit var res: LiveData<List<MovieEntity>>
+    var page = 0
 
 
     //View model factory to inject or instantiate movieViewModel
@@ -66,7 +70,7 @@ class AllMoviesFragment : Fragment() {
     ): View? {
 
 
-        observable = MutableLiveData()
+
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_all_movies, container, false)
@@ -82,29 +86,34 @@ class AllMoviesFragment : Fragment() {
         NavigationUI.setupWithNavController(allMoviesToolbar, nav)
 
         //Getting recyclerview
-        recyclerView = view!!.findViewById<RecyclerView>(R.id.recycler_view_movies)
+        recyclerView = requireView().findViewById<RecyclerView>(R.id.recycler_view_movies)
 
 
-        searchEditText = view!!.findViewById(R.id.searchEditText)
-        searchBtn = view!!.findViewById(R.id.searchBtn)
+        searchEditText = requireView().findViewById(R.id.searchEditText)
+        searchBtn = requireView().findViewById(R.id.searchBtn)
 
+
+
+        observable = MutableLiveData()
         //Function to load data
-        loadData(context!!, 1)
+        loadData(requireContext(), 1)
 
         //Observe live data and set into adapter
         observeAndSetData()
 
         // function for recyclerView ItemTouchHelper
         swipeItemTouchHelper()
+
+        swipeItemTouchHelperForFavourite()
         //function to navigate to favourite fragment
         navigateToFavourite()
+
         onMenuClick()
 
         // function to search
         searchFun()
 
 //        Log.i("onacti", "text $textOnScreen")
-
 
         loadMoreMovies()
 
@@ -155,7 +164,7 @@ class AllMoviesFragment : Fragment() {
     }
 
     private suspend fun getLocalMovieList():List<MovieEntity> {
-        val localMovies = ServiceLocator.createLocalDataSource(context!!).movieDao?.getMoviesList()
+        val localMovies = ServiceLocator.createLocalDataSource(requireContext()).movieDao?.getMoviesList()
         Log.i("movieSize", "${localMovies?.size}")
         return localMovies as List<MovieEntity>
     }
@@ -192,10 +201,23 @@ class AllMoviesFragment : Fragment() {
 
     private fun loadData(context: Context, page:Int){
 
+        progress_bar.visible()
+        recyclerView?.hide()
 
-        CoroutineScope(IO).launch {
-            movieViewModel.loadMovies(context, page)
+        val previousMoviesSize = movieViewModel.getMoviesSize(context)
+
+        if(previousMoviesSize > 0){
+            Log.i("fromLocal", "Loading $previousMoviesSize")
+            return
         }
+        else{
+            Log.i("fromRemote", "Loading $previousMoviesSize")
+            CoroutineScope(IO).launch {
+                movieViewModel.loadMovies(context, page)
+            }
+        }
+
+
 
     }
 
@@ -206,7 +228,7 @@ class AllMoviesFragment : Fragment() {
             CoroutineScope(Main).launch {
                 recyclerView?.visibility  = View.GONE
                 withContext(IO){
-                    movieViewModel.loadMovies(context!!, pageNum)
+                    movieViewModel.loadMovies(requireContext(), pageNum)
                 }
 
                 Log.i("page", "$pageNum")
@@ -226,19 +248,27 @@ class AllMoviesFragment : Fragment() {
 
     private fun observeAndSetData() {
 
+
         CoroutineScope(Main).launch {
-            val res = movieViewModel.getAllMovies(context!!)
+            delay(1000)
+            root_layout.setBackgroundColor(resources.getColor(R.color.colorAccent))
+            progress_bar.hide()
+            recyclerView?.visible()
+
+            res = movieViewModel.getAllMovies(false, requireContext())
             res.observeForever {
-//                Log.i("allFragment", "${it.get(0).title}")
+
                 observable.value = it
-                setDataIntoAdapter(it)
+                setDataIntoAdapter(it.filterNot {movie-> movie.favourite })
                 recyclerView?.layoutManager =
                     StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
                 recyclerView?.setHasFixedSize(true)
                 recyclerView?.adapter = movieAdapter
+                recyclerView?.itemAnimator = null
 
 //                movieAdapter?.setMovie(it)
             }
+
 
         }
 
@@ -248,86 +278,78 @@ class AllMoviesFragment : Fragment() {
     private fun setDataIntoAdapter(list: List<MovieEntity?>?) {
 
 
+
         movieAdapter = MovieAdapter(list, object : MovieAdapter.OnMovieListener {
             override fun onMovieDoubleClick(movieEntity: MovieEntity, view: View) {
 
                 val fav = view.findViewById<ImageView>(R.id.redFav)
 //                var favMovie = convertToFavourityEntity(movieEntity)
-
-
-                movieEntity.favourite = true
-                if (fav.visibility == View.GONE) {
-                    fav.visibility = View.VISIBLE
-
-
-                    CoroutineScope(Main).launch {
-
-                        try {
-                            insertAndUpdate(movieEntity)
-                            FancyToast.makeText(
-                                context,
-                                "${movieEntity.title} is added to favourite",
-                                FancyToast.LENGTH_LONG,
-                                FancyToast.SUCCESS,
-                                true
-                            ).show()
-                        } catch (e: Exception) {
-
-                            FancyToast.makeText(
-                                context,
-                                "Movie has been previously added \nto favorite",
-                                FancyToast.LENGTH_LONG,
-                                FancyToast.ERROR,
-                                true
-                            ).show()
-
-                        }
-
-
-                    }
-
-
-                } else {
-                    fav.visibility = View.GONE
-                    movieEntity.favourite = false
-                    CoroutineScope(Main).launch {
-
-                        try {
-
-                            deleteAndUpdate(movieEntity)
-                            FancyToast.makeText(
-                                context,
-                                "${movieEntity.title} is removed from favourite",
-                                FancyToast.LENGTH_LONG,
-                                FancyToast.INFO,
-                                true
-                            ).show()
-                        } catch (e: Exception) {
-
-//                                        Toast.makeText(context, "Movie has been previously removed \nto favorite", Toast.LENGTH_SHORT).show()
-                            val snackbar = Snackbar
-                                .make(
-                                    view, "Movie has been previously removed \n" +
-                                            "to favorite", Snackbar.LENGTH_LONG
-                                )
-                            snackbar.show()
-                        }
-
-
-                    }
-                }
+//                movieEntity.favourite = true
+//                if (fav.visibility == View.GONE) {
+//                    fav.visibility = View.VISIBLE
+//
+//
+//                    CoroutineScope(Main).launch {
+//
+//                        try {
+//                            insertAndUpdate(movieEntity)
+//                            FancyToast.makeText(
+//                                context,
+//                                "${movieEntity.title} is added to favourite",
+//                                FancyToast.LENGTH_LONG,
+//                                FancyToast.SUCCESS,
+//                                true
+//                            ).show()
+//                        } catch (e: Exception) {
+//
+//                            FancyToast.makeText(
+//                                context,
+//                                "Movie has been previously added \nto favorite",
+//                                FancyToast.LENGTH_LONG,
+//                                FancyToast.ERROR,
+//                                true
+//                            ).show()
+//
+//                        }
+//
+//
+//                    }
+//
+//
+//                } else {
+//                    fav.visibility = View.GONE
+//                    movieEntity.favourite = false
+//                    CoroutineScope(Main).launch {
+//
+//                        try {
+//
+//                            deleteAndUpdate(movieEntity)
+//                            FancyToast.makeText(
+//                                context,
+//                                "${movieEntity.title} is removed from favourite",
+//                                FancyToast.LENGTH_LONG,
+//                                FancyToast.INFO,
+//                                true
+//                            ).show()
+//                        } catch (e: Exception) {
+//
+////                                        Toast.makeText(context, "Movie has been previously removed \nto favorite", Toast.LENGTH_SHORT).show()
+//                            val snackbar = Snackbar
+//                                .make(
+//                                    view, "Movie has been previously removed \n" +
+//                                            "to favorite", Snackbar.LENGTH_LONG
+//                                )
+//                            snackbar.show()
+//                        }
+//
+//
+//                    }
+//                }
 
             }
 
             override fun onSingleClick(movieEntity: MovieEntity, view: View) {
-
-
                 gotoDetails(movieEntity)
-
-//                view.deleteIcon.setOnClickListener {
-//                    singleDeletion(movieEntity)
-//                }
-
             }
 
         })
@@ -346,7 +368,7 @@ class AllMoviesFragment : Fragment() {
     }
 
     private suspend fun insertAndUpdate(movieEntity: MovieEntity) {
-        ServiceLocator.createLocalDataSource(context!!).movieDao?.update(movieEntity)
+        ServiceLocator.createLocalDataSource(requireContext()).movieDao?.update(movieEntity)
 
     }
 
@@ -380,7 +402,7 @@ class AllMoviesFragment : Fragment() {
 //
     private fun swipeItemTouchHelper() {
         ItemTouchHelper(object :
-            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT) {
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.DOWN or ItemTouchHelper.LEFT) {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -392,6 +414,7 @@ class AllMoviesFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val movie = movieAdapter?.getMovieAt(viewHolder.adapterPosition)
                 singleDeletion(movie)
+                recyclerView?.scrollToPosition(viewHolder.adapterPosition)
 
             }
 
@@ -400,7 +423,7 @@ class AllMoviesFragment : Fragment() {
 
     //
     private suspend fun deleteAndUpdate(movieEntity: MovieEntity) {
-        ServiceLocator.createLocalDataSource(context!!).movieDao?.update(movieEntity)
+        ServiceLocator.createLocalDataSource(requireContext()).movieDao?.update(movieEntity)
 
 
     }
@@ -421,7 +444,7 @@ class AllMoviesFragment : Fragment() {
                             setPositiveButton("Yes"){_, _ ->
 
                                 CoroutineScope(IO).launch {
-                                    ServiceLocator.createLocalDataSource(context!!).movieDao?.deleteAllMovies(true)
+                                    ServiceLocator.createLocalDataSource(requireContext()).movieDao?.deleteAllMovies(true)
                                 }
                                 Toast.makeText(context, "All movies deleted", Toast.LENGTH_SHORT).show()
                             }
@@ -433,9 +456,6 @@ class AllMoviesFragment : Fragment() {
 
                         }.create().show()
                     }
-
-
-
                     true
                 }
                 else -> false
@@ -469,6 +489,52 @@ class AllMoviesFragment : Fragment() {
         }.create().show()
     }
 
+
+    private fun swipeItemTouchHelperForFavourite() {
+        ItemTouchHelper(object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP or ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val movie = movieAdapter?.getMovieAt(viewHolder.adapterPosition)
+                movie?.favourite = true
+                CoroutineScope(IO).launch {
+                    movie?.let { insertAndUpdate(it) }
+                }
+
+                FancyToast.makeText(
+                    context,
+                    "${movie?.title} is added to favourite",
+                    FancyToast.LENGTH_LONG,
+                    FancyToast.SUCCESS,
+                    true
+                ).show()
+                recyclerView?.scrollToPosition(viewHolder.adapterPosition)
+
+            }
+
+        }).attachToRecyclerView(recycler_view_movies)
+    }
+
+    private fun View.visible(){
+        this.visibility = View.VISIBLE
+    }
+
+    private fun View.hide(){
+        this.visibility = View.GONE
+    }
+
+//    override fun onDestroy() {
+//        super.onDestroy()
+//
+//        res.removeObservers(viewLifecycleOwner)
+//    }
 }
 
 

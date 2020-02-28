@@ -21,25 +21,20 @@ class MovieRepository(
     ):LiveData<List<MovieEntity>> {
         var responseList:LiveData<List<MovieEntity>>
         if(fetch){
-            responseList = page?.let { remoteDataSourceManager.getMovies(context, it) }!!
-
-//            Result.Success(responseList)
+            responseList = page?.let { remoteDataSourceManager.getRemoteMovies(context, it) }!!
             Log.i("MovieRepo", "remote")
+            return responseList
         }
         else{
 
-            responseList = localDataSourceManager.getMovies(context, page)!!
+            responseList = localDataSourceManager.getLocaleMovies(context)!!
 //            val size = result.value?.size
 //            Result.Success(responseList)
             Log.i("MovieRepo", "local")
-//            localDataSourceManager.getMovies(context)
-//            result.observeForever {
-//                Log.i("MovieRepo", "${it.get(0).title}")
-//            }
-
+            return responseList
         }
 
-        return responseList
+
     }
 
     override suspend fun getFavMovies(context: Context): LiveData<List<MovieEntity>>? {
@@ -48,11 +43,13 @@ class MovieRepository(
         return result
     }
 
-    override suspend fun getMoviesList(context: Context): List<MovieEntity> {
+    override fun getMoviesList(context: Context): List<MovieEntity> {
         val result = localDataSourceManager.getMovieList(context)
         Result.Success(result)
         return result
     }
+
+
 
 //    private fun fetchRemotely(){
 //

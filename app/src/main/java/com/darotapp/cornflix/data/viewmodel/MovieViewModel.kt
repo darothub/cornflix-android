@@ -9,20 +9,24 @@ import com.darotapp.cornflix.data.Result
 import com.darotapp.cornflix.data.local.database.FavouriteMoviesEntity
 import com.darotapp.cornflix.data.local.database.MovieEntity
 import com.darotapp.cornflix.data.repository.MoviesRepoInterface
+import kotlin.properties.Delegates
 
 class MovieViewModel(private val moviesRepoInterface: MoviesRepoInterface): ViewModel() {
 
 
     var fireModel = MutableLiveData<Boolean>(false)
+    var listSize = 0
+
 
     suspend fun loadMovies(context: Context, page: Int){
         moviesRepoInterface.getMovies(true, context, page)
     }
 
-    suspend fun getAllMovies(context: Context):LiveData<List<MovieEntity>>{
+    suspend fun getAllMovies(fetch:Boolean=false, context: Context):LiveData<List<MovieEntity>>{
         fireModel.value = true
-        var localData:LiveData<List<MovieEntity>> = moviesRepoInterface.getMovies(false, context)
+        var localData:LiveData<List<MovieEntity>> = moviesRepoInterface.getMovies(fetch, context)
 
+        getMoviesList(context)
         return localData
         Log.i("viewmodel", "called")
     }
@@ -34,9 +38,14 @@ class MovieViewModel(private val moviesRepoInterface: MoviesRepoInterface): View
         return result
     }
 
-    suspend fun getMoviesList(context: Context):List<MovieEntity>{
+    fun getMoviesList(context: Context):List<MovieEntity>{
         val result = moviesRepoInterface.getMoviesList(context)
+        listSize = result.size
         Result.Success(result)
         return result
+    }
+
+    fun getMoviesSize(context: Context):Int{
+        return getMoviesList(context).size
     }
 }

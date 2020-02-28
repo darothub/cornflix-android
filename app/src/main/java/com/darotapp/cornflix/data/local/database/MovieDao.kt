@@ -9,6 +9,9 @@ interface MovieDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(movieEntity: MovieEntity)
 
+    @Insert
+    fun insertNewChanges(movies: List<MovieEntity>)
+
     @Update
     suspend fun update(movieEntity: MovieEntity)
 
@@ -16,7 +19,7 @@ interface MovieDao {
     suspend fun delete(movieEntity: MovieEntity)
 
     @Query("SELECT * FROM movieentity")
-    suspend fun getMoviesList(): List<MovieEntity>
+    fun getMoviesList(): List<MovieEntity>
 
 
     @get:Query(

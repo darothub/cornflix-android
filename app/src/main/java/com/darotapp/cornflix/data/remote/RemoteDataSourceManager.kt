@@ -21,15 +21,15 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class RemoteDataSourceManager : ServiceCall {
-    override suspend fun getMovies(context: Context, page: Int?):LiveData<List<MovieEntity>> {
-        return getRemoteMovies(context, page)
+    override suspend fun getRemoteMovies(context: Context, page: Int?):LiveData<List<MovieEntity>> {
+        return getMovies(context, page)
     }
 
 
 
 
 
-    private fun getRemoteMovies(context: Context, page: Int?): LiveData<List<MovieEntity>> {
+    private fun getMovies(context: Context, page: Int?): LiveData<List<MovieEntity>> {
         val responseList = MutableLiveData<List<MovieEntity>>()
         var listResult: Result<List<MovieEntity>>? = null
         val listOfMovies = ArrayList<MovieEntity>()

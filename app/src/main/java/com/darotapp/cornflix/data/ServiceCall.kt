@@ -8,7 +8,12 @@ import com.darotapp.cornflix.data.local.database.MovieEntity
 
 interface ServiceCall {
 
-    suspend fun getMovies(context: Context, page: Int?): LiveData<List<MovieEntity>>? {
+    suspend fun getRemoteMovies(context: Context, page: Int?): LiveData<List<MovieEntity>>? {
+        var go =MutableLiveData<List<MovieEntity>>()
+        return go
+    }
+
+    suspend fun getLocaleMovies(context: Context): LiveData<List<MovieEntity>>? {
         var go =MutableLiveData<List<MovieEntity>>()
         return go
     }
@@ -17,7 +22,7 @@ interface ServiceCall {
         return go
     }
 
-    suspend fun getMovieList(context: Context):List<MovieEntity>{
+    fun getMovieList(context: Context):List<MovieEntity>{
         return listOf(MovieEntity(null, null, null, null, null))
     }
 
